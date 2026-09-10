@@ -1,4 +1,5 @@
 import type { WeChatThemeId } from './wechat/themes';
+import type { MultiPlatformId, MultiPublishPairing } from './multiPublish/types';
 
 export type AgentId = 'claude' | 'codex' | 'opencode';
 
@@ -304,6 +305,10 @@ export interface WeSightObsidianSettings {
 wechatCustomThemeName: string;
 /** Style brief used to regenerate the reusable AI-generated WeChat theme. */
 wechatCustomThemeDescription: string;
+  /** Last selected destinations in the local multi-platform publisher. */
+  multiPublishPlatforms: MultiPlatformId[];
+  /** Browser extension identity and shared HMAC secret for the loopback bridge. */
+  multiPublishPairing: MultiPublishPairing | null;
 }
 
 export const DEFAULT_CONFIG_SOURCES: ConfigSourcesByAgent = {
@@ -345,4 +350,6 @@ export const DEFAULT_SETTINGS: WeSightObsidianSettings = {
   wechatThemeId: 'canghe-style-tes',
 wechatCustomThemeName: '',
 wechatCustomThemeDescription: '',
+  multiPublishPlatforms: ['zhihu'],
+  multiPublishPairing: null,
 };

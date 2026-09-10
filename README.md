@@ -13,6 +13,24 @@ WeSight detects existing executables from the configured path, the system path, 
 
 ## Features
 
+### Article-to-social workbench (1.0.0)
+
+Use **转为图文** in the WeSight header, note toolbar, file menu, or command palette to open the right-side workbench while keeping the original note visible. **快速转** prepares Xiaohongshu, Weibo image posts, and Jike posts with shared or platform-specific copy. Review copy in place, select/reorder original article images, or open a platform tab for detailed editing.
+
+The Xiaohongshu image workspace offers local typography templates and a separate AI-image gallery with style selection, reference images, aspect ratios, single-image regeneration, and ordering. Generation uses your configured compatible agent/provider; AI image generation requires image-generation support. Inputs may be sent to that provider according to its configuration. Local drafts and generated assets are stored under `.wesight/` in the vault.
+
+Signed-in free users can convert and prepare one platform at a time. Active members can select multiple platforms. Attempting a second free-user selection shows an inline membership notice without losing edited text or images; initial entry has no membership prompt.
+
+### Browser-assisted platform drafts (1.0.0)
+
+**分享 → 多平台** supports Zhihu, CSDN, Juejin, Bilibili articles, Toutiao, and Weibo articles. The social workbench additionally prepares Xiaohongshu image posts, Weibo image posts, and Jike posts.
+
+Install [WeSight Publish Assistant 1.0.0 or later](https://github.com/freestylefly/wesight-chrome/releases) in Chrome or Edge and follow the one-time local pairing flow. The plugin starts a temporary HTTP service bound only to `127.0.0.1`; task access expires after ten minutes. Article and image transfer to the extension does not use WeSight Cloud. The extension then uploads to the platforms you chose using the browser's existing signed-in session. Keep Obsidian open until preparation completes.
+
+The task panel supports status, editor links, login recovery, and retries. All workflows stop at an editable draft: **you perform the final Publish action**. The existing WeChat draft service continues separately.
+
+See the [1.0.0 release notes](docs/releases/1.0.0.md) for the complete Chinese update summary and upgrade instructions.
+
 ### Local agent chat
 
 1. Open **Settings → WeSight** and select Claude Code, Codex, or OpenCode.
@@ -86,6 +104,7 @@ The plugin connects to remote services only for features that need them:
 - `api.wesight.ai` handles WeSight sign-in, Knowledge Brain member entitlements, share snapshots, share assets, comments configuration, and WeChat draft operations.
 - `share.wesight.ai` hosts links created by the internet-sharing feature.
 - GitHub Releases provides the latest formal WeSight plugin manifest for update discovery and hosts optional Knowledge Brain resources.
+- GitHub Releases also hosts the separately installed Chrome/Edge publishing assistant. Local pairing and publishing tasks use `127.0.0.1`; the extension contacts the selected content platforms.
 - The provider URL selected in settings may be contacted to load its model list. Agent subprocesses contact providers according to their own configuration.
 - Generating a Skill-based WeChat theme sends the article Markdown to the provider used by the selected agent configuration.
 - Lark CLI contacts Feishu when you configure, authorize, create, or update a document.

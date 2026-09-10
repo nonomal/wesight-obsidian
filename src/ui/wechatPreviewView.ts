@@ -81,6 +81,7 @@ import { promptForWeChatArticleLink } from './wechatArticleLinkModal';
 import {
   resolveWeChatPreviewRefreshControlState,
   resolveWeChatPreviewSourcePath,
+  WeChatPreviewLoadingCoordinator,
   WeChatPreviewRequestCoordinator,
   type WeChatPreviewRequest,
 } from './wechatPreviewRefresh';
@@ -126,6 +127,7 @@ export class WeChatPreviewView extends ItemView {
   private lastActiveMarkdownFile: TFile | null = null;
   private readonly fileSwitchRequests = new WeChatPreviewRequestCoordinator();
   private readonly previewLoadRequests = new WeChatPreviewRequestCoordinator();
+  private readonly previewLoadingRequests = new WeChatPreviewLoadingCoordinator();
   private metadataSaveTimer: number | null = null;
   private activeTab: WeChatPreviewTab = 'preview';
   private themeDocument: WeChatThemeDocument | null = null;
@@ -224,6 +226,8 @@ export class WeChatPreviewView extends ItemView {
     this.articleStatsRequestId += 1;
     this.fileSwitchRequests.invalidate();
     this.previewLoadRequests.invalidate();
+    this.previewLoadingRequests.invalidate();
+    this.loading = false;
     this.invalidateThemeGeneration();
     if (this.refreshTimer !== null) window.clearTimeout(this.refreshTimer);
     this.refreshTimer = null;
@@ -352,6 +356,7 @@ export class WeChatPreviewView extends ItemView {
     targetFile: TFile | null,
   ): Promise<void> {
     this.invalidateThemeGeneration();
+    this.previewLoadingRequests.begin(request);
     this.loading = true;
     this.error = null;
     this.themeGenerationError = null;
@@ -407,18 +412,20 @@ export class WeChatPreviewView extends ItemView {
       if (!this.isCurrentPreviewLoad(request, targetFile)) return;
       this.error = error instanceof Error ? error.message : '公众号预览加载失败';
     } finally {
-      if (this.isCurrentPreviewLoad(request, targetFile)) {
+      const isCurrent = this.isCurrentPreviewLoad(request, targetFile);
+      if (this.previewLoadingRequests.finish(request)) {
         this.loading = false;
         this.render();
-        if (
-          this.activeTab === 'monitoring'
-          && this.articleUrl
-          && !this.articleStats
-          && !this.articleStatsLoading
-          && !this.error
-        ) {
-          void this.refreshArticleStats();
-        }
+      }
+      if (
+        isCurrent
+        && this.activeTab === 'monitoring'
+        && this.articleUrl
+        && !this.articleStats
+        && !this.articleStatsLoading
+        && !this.error
+      ) {
+        void this.refreshArticleStats();
       }
     }
   }

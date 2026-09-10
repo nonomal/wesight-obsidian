@@ -20,9 +20,17 @@ const rawTextPlugin = {
   },
 };
 
+// Retain bundled font copyright and OFL terms in the standalone release asset.
+const fontNotices = await Promise.all([
+  'LICENSES/NotoSansSC-OFL-1.1.txt',
+  'LICENSES/NotoSerifSC-OFL-1.1.txt',
+  'LICENSES/MaShanZheng-OFL-1.1.txt',
+  'LICENSES/ZCOOLKuaiLe-OFL-1.1.txt',
+].map(async file => `${file}\n${await fs.readFile(file, 'utf8')}`));
+
 const context = await esbuild.context({
   banner: {
-    js: '/* WeSight Obsidian plugin */',
+    js: `/* WeSight Obsidian plugin\n${fontNotices.join('\n\n').replaceAll('*/', '* /')}\n*/`,
   },
   bundle: true,
   entryPoints: ['src/main.ts'],
@@ -44,7 +52,10 @@ const context = await esbuild.context({
   format: 'cjs',
   logLevel: 'info',
   loader: {
+    '.jpg': 'dataurl',
+    '.jpeg': 'dataurl',
     '.png': 'dataurl',
+    '.woff2': 'dataurl',
   },
   minify: production,
   outfile: 'main.js',

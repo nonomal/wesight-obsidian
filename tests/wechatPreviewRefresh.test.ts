@@ -1,6 +1,7 @@
 import {
   resolveWeChatPreviewRefreshControlState,
   resolveWeChatPreviewSourcePath,
+  WeChatPreviewLoadingCoordinator,
   WeChatPreviewRequestCoordinator,
 } from '../src/ui/wechatPreviewRefresh';
 
@@ -74,5 +75,30 @@ describe('WeChat preview refresh control', () => {
 
     expect(coordinator.isPending('articles/b.md')).toBe(true);
     expect(coordinator.isCurrent(requestB)).toBe(true);
+  });
+
+  test('lets an interrupted full reload settle its loading state after a content refresh starts', () => {
+    const requests = new WeChatPreviewRequestCoordinator();
+    const loading = new WeChatPreviewLoadingCoordinator();
+    const fullReload = requests.begin('articles/a.md');
+    loading.begin(fullReload);
+
+    const contentRefresh = requests.begin('articles/a.md');
+
+    expect(requests.isCurrent(fullReload)).toBe(false);
+    expect(requests.isCurrent(contentRefresh)).toBe(true);
+    expect(loading.finish(fullReload)).toBe(true);
+  });
+
+  test('keeps loading owned by the newest full reload', () => {
+    const requests = new WeChatPreviewRequestCoordinator();
+    const loading = new WeChatPreviewLoadingCoordinator();
+    const firstReload = requests.begin('articles/a.md');
+    loading.begin(firstReload);
+    const latestReload = requests.begin('articles/b.md');
+    loading.begin(latestReload);
+
+    expect(loading.finish(firstReload)).toBe(false);
+    expect(loading.finish(latestReload)).toBe(true);
   });
 });

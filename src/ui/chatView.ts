@@ -63,6 +63,7 @@ export interface ChatViewDeps {
   auth: CloudAuthService;
   openSettings: () => void;
   openWeChatPreview: (file?: TFile) => Promise<void>;
+  openImageTextWorkbench: (file: TFile) => Promise<void>;
   openSharePopover: (file: TFile, anchor?: HTMLElement | null) => void;
   knowledgeBrain: KnowledgeBrain;
   knowledgeBrainEntitlement: KnowledgeBrainEntitlementService;
@@ -631,12 +632,14 @@ export class WeSightChatView extends ItemView {
 
     const headerActions = header.createDiv({ cls: 'wesight-header-actions' });
 
-    const shareButton = headerActions.createEl('button', { cls: 'wesight-share-btn' });
-    const shareIcon = shareButton.createSpan({ cls: 'wesight-share-btn-icon' });
-    setIcon(shareIcon, 'share');
-    shareButton.createSpan({ cls: 'wesight-share-btn-label', text: '分享' });
-    shareButton.ariaLabel = '打开分享面板';
-    shareButton.onclick = () => void this.openSharePopover(shareButton);
+    const transformButton = headerActions.createEl('button', {
+      cls: 'wesight-transform-btn',
+      attr: { type: 'button', 'aria-label': '将当前笔记转为图文', title: '转为图文' },
+    });
+    const transformIcon = transformButton.createSpan({ cls: 'wesight-transform-icon' });
+    setIcon(transformIcon, 'image-plus');
+    transformButton.createSpan({ cls: 'wesight-transform-label', text: '转为图文' });
+    transformButton.onclick = () => void this.openImageTextWorkbench();
 
     const wechatPublishButton = headerActions.createEl('button', { cls: 'wesight-wechat-publish-btn' });
     const wechatIcon = wechatPublishButton.createSpan({ cls: 'wesight-wechat-publish-icon' });
@@ -644,6 +647,14 @@ export class WeSightChatView extends ItemView {
     wechatPublishButton.createSpan({ cls: 'wesight-wechat-publish-label', text: '发公众号' });
     wechatPublishButton.ariaLabel = '打开公众号预览';
     wechatPublishButton.onclick = () => void this.openWeChatPreview();
+
+    const shareButton = headerActions.createEl('button', { cls: 'wesight-share-btn' });
+    const shareIcon = shareButton.createSpan({ cls: 'wesight-share-btn-icon' });
+    setIcon(shareIcon, 'share');
+    shareButton.createSpan({ cls: 'wesight-share-btn-label', text: '分享' });
+    shareButton.ariaLabel = '打开分享面板';
+    shareButton.onclick = () => void this.openSharePopover(shareButton);
+    headerActions.createSpan({ cls: 'wesight-header-action-divider', attr: { 'aria-hidden': 'true' } });
 
     const newChatButton = headerActions.createEl('button', { cls: 'clickable-icon wesight-header-btn' });
     setIcon(newChatButton, 'plus');
@@ -2799,6 +2810,21 @@ export class WeSightChatView extends ItemView {
       new Notice('Image attachment added.');
     } else {
       new Notice('Note attachment added.');
+    }
+  }
+
+  private async openImageTextWorkbench(): Promise<void> {
+    const file = this.getVisibleEditorContext()?.file
+      ?? this.activeEditorContext?.file
+      ?? this.app.workspace.getActiveFile();
+    if (!(file instanceof TFile) || file.extension !== 'md') {
+      new Notice('请先打开一篇笔记，再转为图文。');
+      return;
+    }
+    try {
+      await this.deps.openImageTextWorkbench(file);
+    } catch (error) {
+      new Notice(error instanceof Error ? error.message : '打开图文工作台失败，请重试。');
     }
   }
 

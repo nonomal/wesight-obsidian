@@ -38,6 +38,24 @@ export class WeChatPreviewRequestCoordinator {
   }
 }
 
+export class WeChatPreviewLoadingCoordinator {
+  private ownerRequestId: number | null = null;
+
+  begin(request: WeChatPreviewRequest): void {
+    this.ownerRequestId = request.id;
+  }
+
+  finish(request: WeChatPreviewRequest): boolean {
+    if (this.ownerRequestId !== request.id) return false;
+    this.ownerRequestId = null;
+    return true;
+  }
+
+  invalidate(): void {
+    this.ownerRequestId = null;
+  }
+}
+
 export function resolveWeChatPreviewSourcePath(
   activeMarkdownPath: string | null,
   recentFilePath: string | null,

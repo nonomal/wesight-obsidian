@@ -22,6 +22,10 @@ meta_short_drama/
 
 # Design QA and agent run artifacts
 design-qa*.md
+design-qa*.png
+design-qa*.jpeg
+design-qa*.jpg
+design-qa*/
 qa-*.png
 evidence_round_*.json
 plan*.json

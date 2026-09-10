@@ -1,5 +1,63 @@
 # Third-Party Notices
 
+## Noto Sans SC
+
+WeSight embeds a WOFF2 subset of
+[Noto Sans SC](https://github.com/google/fonts/tree/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/notosanssc)
+for the Basic and Illustrated Xiaohongshu typography templates. The subset was
+produced locally from `NotoSansSC[wght].ttf` with FontTools 4.64.0 and retains
+the variable `wght` axis, GB2312 Chinese characters, Latin characters, and
+common punctuation. Font requests and article content remain on the user's
+device.
+
+Copyright 2014-2021 Adobe (http://www.adobe.com/), with Reserved Font Name
+'Source'.
+
+License: SIL Open Font License, Version 1.1. The upstream license text is
+available at `LICENSES/NotoSansSC-OFL-1.1.txt`.
+
+## Noto Serif SC
+
+WeSight embeds a WOFF2 subset of
+[Noto Serif SC](https://github.com/google/fonts/tree/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/notoserifsc)
+for the Minimal Xiaohongshu typography template. The subset was produced
+locally from `NotoSerifSC[wght].ttf` with FontTools 4.64.0 and retains the
+variable `wght` axis, GB2312 Chinese characters, Latin characters, and common
+punctuation. Font requests and article content remain on the user's device.
+
+Copyright 2012 Google Inc. All Rights Reserved.
+
+License: SIL Open Font License, Version 1.1. The upstream license text is
+available at `LICENSES/NotoSerifSC-OFL-1.1.txt`.
+
+## ZCOOL KuaiLe
+
+WeSight embeds
+[ZCOOL KuaiLe](https://github.com/google/fonts/tree/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/zcoolkuaile)
+for the Comic Xiaohongshu typography template. The upstream TrueType font is
+re-encoded as WOFF2 with FontTools 4.64.0 without removing glyphs. Font
+requests and article content remain on the user's device.
+
+Copyright 2018 The ZCOOL KuaiLe Project Authors
+(https://github.com/googlefonts/zcool-kuaile).
+
+License: SIL Open Font License, Version 1.1. The upstream license text is
+available at `LICENSES/ZCOOLKuaiLe-OFL-1.1.txt`.
+
+## Ma Shan Zheng
+
+WeSight embeds the
+[Ma Shan Zheng](https://github.com/google/fonts/tree/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/mashanzheng)
+Chinese handwriting font for Xiaohongshu typography templates. The bundled
+WOFF2 family, version, and glyph repertoire were verified against the pinned
+upstream TrueType font. Article content and font requests remain on the user's
+device.
+
+Copyright 2018 The Ma Shan Zheng Project Authors.
+
+License: SIL Open Font License, Version 1.1. The license text is available at
+`LICENSES/MaShanZheng-OFL-1.1.txt`.
+
 ## claude-obsidian
 
 Knowledge Brain downloads [AgriciDaniel/claude-obsidian](https://github.com/AgriciDaniel/claude-obsidian) on demand. WeSight pins version `2.1.0` at commit `a3b3df4539802e150e942266fd310c1b5978a3c0` and verifies the archive before installation.

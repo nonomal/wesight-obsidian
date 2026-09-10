@@ -9,6 +9,7 @@ import {
 } from '../share/snapshot';
 import type { ShareSnapshot, ShareState } from '../share/types';
 import type { LarkCliService } from '../feishu/larkCli';
+import type { MultiPublishBridge } from '../multiPublish/bridge';
 import type { WeSightObsidianSettings } from '../types';
 import { recordValue } from '../utils/records';
 import type { WeChatCloudApi } from '../wechat/cloudApi';
@@ -16,8 +17,9 @@ import { FeishuSharePanel } from './feishuSharePanel';
 import { confirmShareAction } from './shareConfirm';
 import { openBillingModal } from './billingModal';
 import { WeChatSharePanel } from './wechatSharePanel';
+import { MultiPublishPanel } from './multiPublishPanel';
 
-export type SharePopoverTab = 'internet' | 'feishu' | 'wechat';
+export type SharePopoverTab = 'internet' | 'feishu' | 'wechat' | 'multi-platform';
 
 function formatPublishedAt(value: string): string {
   return new Intl.DateTimeFormat('zh-CN', {
@@ -37,6 +39,7 @@ export class SharePopoverController {
     private readonly api: ShareCloudApi,
     private readonly wechatApi: WeChatCloudApi,
     private readonly larkCli: LarkCliService,
+    private readonly multiPublishBridge: MultiPublishBridge,
     private readonly getSettings: () => WeSightObsidianSettings,
     private readonly saveSettings: () => Promise<void>,
     private readonly openWeChatSettings: () => void,
@@ -56,6 +59,7 @@ export class SharePopoverController {
       this.api,
       this.wechatApi,
       this.larkCli,
+      this.multiPublishBridge,
       this.getSettings,
       this.saveSettings,
       this.openWeChatSettings,
@@ -93,6 +97,7 @@ class SharePopover {
   private authUnsubscribe: (() => void) | null = null;
   private readonly feishuPanel: FeishuSharePanel;
   private readonly wechatPanel: WeChatSharePanel;
+  private readonly multiPublishPanel: MultiPublishPanel;
   private readonly onResize = () => this.position();
   private readonly onKeyDown = (event: KeyboardEvent) => {
     if (event.key === 'Escape') this.close();
@@ -104,6 +109,7 @@ class SharePopover {
     private readonly api: ShareCloudApi,
     wechatApi: WeChatCloudApi,
     larkCli: LarkCliService,
+    multiPublishBridge: MultiPublishBridge,
     getSettings: () => WeSightObsidianSettings,
     saveSettings: () => Promise<void>,
     openWeChatSettings: () => void,
@@ -140,6 +146,16 @@ class SharePopover {
         await openWeChatArticleStats(target);
       },
     });
+    this.multiPublishPanel = new MultiPublishPanel({
+      app,
+      auth,
+      bridge: multiPublishBridge,
+      file,
+      getSettings,
+      saveSettings,
+      requestRender: () => this.render(),
+      requestPosition: () => this.position(),
+    });
   }
 
   open(): void {
@@ -161,8 +177,11 @@ class SharePopover {
       this.loginPending = false;
       if (this.activeTab === 'wechat') {
         this.wechatPanel.activate(true);
-      } else {
+      } else if (this.activeTab === 'internet') {
         void this.load();
+      } else if (this.activeTab === 'multi-platform') {
+        this.multiPublishPanel.activate(true);
+        this.render();
       }
     });
     this.render();
@@ -171,6 +190,8 @@ class SharePopover {
       this.feishuPanel.activate();
     } else if (this.activeTab === 'wechat') {
       this.wechatPanel.activate();
+    } else if (this.activeTab === 'multi-platform') {
+      this.multiPublishPanel.activate();
     } else {
       void this.load();
     }
@@ -180,6 +201,7 @@ class SharePopover {
     this.loadVersion += 1;
     this.feishuPanel.dispose();
     this.wechatPanel.dispose();
+    this.multiPublishPanel.dispose();
     this.authUnsubscribe?.();
     this.authUnsubscribe = null;
     window.removeEventListener('resize', this.onResize);
@@ -248,12 +270,14 @@ class SharePopover {
 
     this.renderTabs();
     const body = this.panelEl.createDiv({
-      cls: `wesight-share-body${this.activeTab === 'feishu' ? ' is-feishu' : ''}${this.activeTab === 'wechat' ? ' is-wechat' : ''}`,
+      cls: `wesight-share-body${this.activeTab === 'feishu' ? ' is-feishu' : ''}${this.activeTab === 'wechat' ? ' is-wechat' : ''}${this.activeTab === 'multi-platform' ? ' is-multi-platform' : ''}`,
     });
     if (this.activeTab === 'feishu') {
       this.feishuPanel.render(body);
     } else if (this.activeTab === 'wechat') {
       this.wechatPanel.render(body);
+    } else if (this.activeTab === 'multi-platform') {
+      this.multiPublishPanel.render(body);
     } else if (this.loading) {
       this.renderLoading(body);
     } else if (!this.auth.getCurrentUser()) {
@@ -284,6 +308,7 @@ class SharePopover {
       { id: 'internet', label: '互联网', ariaLabel: '互联网分享' },
       { id: 'feishu', label: '飞书', ariaLabel: '飞书文档' },
       { id: 'wechat', label: '公众号', ariaLabel: '公众号草稿' },
+      { id: 'multi-platform', label: '多平台', ariaLabel: '多平台草稿' },
     ];
     for (const option of options) {
       const selected = this.activeTab === option.id;
@@ -305,6 +330,8 @@ class SharePopover {
           this.feishuPanel.activate();
         } else if (option.id === 'wechat') {
           this.wechatPanel.activate();
+        } else if (option.id === 'multi-platform') {
+          this.multiPublishPanel.activate();
         } else if (!this.snapshot && !this.loading) {
           void this.load();
         }

@@ -54,6 +54,7 @@ const license = fs.readFileSync('LICENSE', 'utf8');
 requireCondition(license.includes('GNU AFFERO GENERAL PUBLIC LICENSE'), 'Root license must contain AGPL-3.0.');
 
 const bundle = fs.readFileSync('main.js', 'utf8');
+requireCondition(bundle.includes('SIL OPEN FONT LICENSE'), 'Production bundle must retain the bundled font license.');
 requireCondition(!/sourceMappingURL=/.test(bundle), 'Production main.js must not include a source map.');
 requireCondition(
   !/\bimport\(\s*["'](?:node:)?(?:assert|buffer|child_process|crypto|events|fs(?:\/promises)?|https?|os|path|stream|url|util|zlib)["']\s*\)/.test(bundle),

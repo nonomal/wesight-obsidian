@@ -26,6 +26,12 @@ import { CloudAuthService } from './share/cloudAuth';
 import { ShareCloudApi } from './share/cloudApi';
 import { LarkCliService } from './feishu/larkCli';
 import { SharePopoverController } from './ui/sharePopover';
+import { MultiPublishBridge } from './multiPublish/bridge';
+import { MULTI_PLATFORM_IDS } from './multiPublish/types';
+import { XiaohongshuGenerationService } from './xiaohongshu/generationService';
+import { XiaohongshuDraftStore } from './xiaohongshu/store';
+import { WeiboPostDraftStore } from './weiboPost/store';
+import { JikePostDraftStore } from './jikePost/store';
 import { WeChatCloudApi } from './wechat/cloudApi';
 import { WeChatThemeService } from './wechat/themeService';
 import { DEFAULT_WECHAT_THEME_ID, isWeChatThemeId } from './wechat/themes';
@@ -36,6 +42,10 @@ import {
   WeChatPreviewView,
   WESIGHT_WECHAT_PREVIEW_VIEW_TYPE,
 } from './ui/wechatPreviewView';
+import {
+  XiaohongshuWorkbenchView,
+  WESIGHT_XIAOHONGSHU_VIEW_TYPE,
+} from './ui/xiaohongshuWorkbenchView';
 
 import {
   WeChatArticleStatsView,
@@ -67,11 +77,17 @@ export default class WeSightPlugin extends Plugin {
   wechatTemplateThemeService!: TemplateThemeService;
   larkCli!: LarkCliService;
   sharePopover!: SharePopoverController;
+  multiPublishBridge!: MultiPublishBridge;
+  xiaohongshuGenerationService!: XiaohongshuGenerationService;
+  xiaohongshuDraftStore!: XiaohongshuDraftStore;
+  weiboPostDraftStore!: WeiboPostDraftStore;
+  jikePostDraftStore!: JikePostDraftStore;
   settingTab!: WeSightSettingTab;
   knowledgeBrain!: KnowledgeBrain;
   knowledgeBrainEntitlement!: KnowledgeBrainEntitlementService;
   updateService!: UpdateService;
   private shareActions = new WeakMap<MarkdownView, HTMLElement>();
+  private xiaohongshuActions = new WeakMap<MarkdownView, HTMLElement>();
   private knowledgeActions = new WeakMap<MarkdownView, HTMLElement>();
   private shareActionElements = new Set<HTMLElement>();
   private knowledgeActionElements = new Set<HTMLElement>();
@@ -108,12 +124,29 @@ export default class WeSightPlugin extends Plugin {
       getSettings: () => this.settings,
     });
     this.larkCli = new LarkCliService();
+    this.xiaohongshuDraftStore = new XiaohongshuDraftStore(this.app.vault.adapter);
+    this.weiboPostDraftStore = new WeiboPostDraftStore(this.app.vault.adapter);
+    this.jikePostDraftStore = new JikePostDraftStore(this.app.vault.adapter);
+    this.xiaohongshuGenerationService = new XiaohongshuGenerationService({
+      runtimeManager: this.runtimeManager,
+      vaultStore: this.vaultStore,
+      getSettings: () => this.settings,
+    });
+    this.multiPublishBridge = new MultiPublishBridge({
+      getPairing: () => this.settings.multiPublishPairing,
+      savePairing: async (pairing) => {
+        this.settings.multiPublishPairing = pairing;
+        await this.saveData(this.settings);
+      },
+    });
+    await this.multiPublishBridge.start();
     this.sharePopover = new SharePopoverController(
       this.app,
       this.cloudAuth,
       this.shareCloudApi,
       this.wechatCloudApi,
       this.larkCli,
+      this.multiPublishBridge,
       () => this.settings,
       () => this.saveSettings(),
       () => this.openSettings('general'),
@@ -146,6 +179,7 @@ export default class WeSightPlugin extends Plugin {
         updateService: this.updateService,
         auth: this.cloudAuth,
         openSettings: () => this.openSettings(),
+        openImageTextWorkbench: (file: TFile) => this.activateXiaohongshuWorkbench(file),
         openWeChatPreview: (file?: TFile) => {
           if (!file) {
             new Notice('没有打开的笔记，无法预览公众号。');
@@ -169,6 +203,20 @@ export default class WeSightPlugin extends Plugin {
         updateService: this.updateService,
         getSettings: () => this.settings,
         saveSettings: () => this.saveSettings(),
+        openSettings: () => this.openSettings('general'),
+      }),
+    );
+    this.registerView(
+      WESIGHT_XIAOHONGSHU_VIEW_TYPE,
+      (leaf: WorkspaceLeaf) => new XiaohongshuWorkbenchView(leaf, {
+        getSettings: () => this.settings,
+        auth: this.cloudAuth,
+        bridge: this.multiPublishBridge,
+        generationService: this.xiaohongshuGenerationService,
+        draftStore: this.xiaohongshuDraftStore,
+        weiboPostDraftStore: this.weiboPostDraftStore,
+        jikePostDraftStore: this.jikePostDraftStore,
+        vaultStore: this.vaultStore,
         openSettings: () => this.openSettings('general'),
       }),
     );
@@ -208,6 +256,13 @@ export default class WeSightPlugin extends Plugin {
         .setTitle('同步到公众号草稿箱')
         .setIcon('message-circle')
         .onClick(() => void this.activateWeChatPreview(file)));
+    }));
+    this.registerEvent(this.app.workspace.on('file-menu', (menu, file) => {
+      if (!(file instanceof TFile) || file.extension !== 'md') return;
+      menu.addItem(item => item
+        .setTitle('WeSight：转为图文动态')
+        .setIcon('notebook-pen')
+        .onClick(() => void this.activateXiaohongshuWorkbench(file)));
     }));
     this.registerEvent(this.app.workspace.on('file-menu', (menu, file) => {
       if (!(file instanceof TFile) || file.extension !== 'md') return;
@@ -276,8 +331,9 @@ export default class WeSightPlugin extends Plugin {
       name: 'Share current note to internet',
       checkCallback: checking => {
         const view = this.app.workspace.getActiveViewOfType(MarkdownView);
-        if (!view?.file) return false;
-        if (!checking) this.sharePopover.open(view.file, this.shareActions.get(view));
+        const file = view?.file ?? this.app.workspace.getActiveFile();
+        if (!file || file.extension !== 'md') return false;
+        if (!checking) this.sharePopover.open(file, view ? this.shareActions.get(view) : null);
         return true;
       },
     });
@@ -287,10 +343,37 @@ export default class WeSightPlugin extends Plugin {
       name: 'Publish current note to Feishu document',
       checkCallback: checking => {
         const view = this.app.workspace.getActiveViewOfType(MarkdownView);
-        if (!view?.file) return false;
+        const file = view?.file ?? this.app.workspace.getActiveFile();
+        if (!file || file.extension !== 'md') return false;
         if (!checking) {
-          this.sharePopover.open(view.file, this.shareActions.get(view), 'feishu');
+          this.sharePopover.open(file, view ? this.shareActions.get(view) : null, 'feishu');
         }
+        return true;
+      },
+    });
+
+    this.addCommand({
+      id: 'prepare-current-note-for-multiple-platforms',
+      name: 'Prepare current note for multiple platforms',
+      checkCallback: checking => {
+        const view = this.app.workspace.getActiveViewOfType(MarkdownView);
+        const file = view?.file ?? this.app.workspace.getActiveFile();
+        if (!file || file.extension !== 'md') return false;
+        if (!checking) {
+          this.sharePopover.open(file, view ? this.shareActions.get(view) : null, 'multi-platform');
+        }
+        return true;
+      },
+    });
+
+    this.addCommand({
+      id: 'transform-current-note-to-xiaohongshu',
+      name: '将当前文章转为图文动态',
+      checkCallback: checking => {
+        const view = this.app.workspace.getActiveViewOfType(MarkdownView);
+        const file = view?.file ?? this.app.workspace.getActiveFile();
+        if (!file || file.extension !== 'md') return false;
+        if (!checking) void this.activateXiaohongshuWorkbench(file);
         return true;
       },
     });
@@ -323,6 +406,7 @@ export default class WeSightPlugin extends Plugin {
 
   override onunload(): void {
     this.sharePopover?.close();
+    void this.multiPublishBridge?.stop();
     void this.runtimeManager?.shutdown();
     this.larkCli?.cancelActiveOperation();
     this.knowledgeBrain?.cancel();
@@ -388,6 +472,25 @@ export default class WeSightPlugin extends Plugin {
     if (leaf.view instanceof WeChatPreviewView) {
       await leaf.view.showDataMonitoring(file);
     }
+    await this.app.workspace.revealLeaf(leaf);
+  }
+
+  async activateXiaohongshuWorkbench(file: TFile): Promise<void> {
+    let leaf: WorkspaceLeaf | null =
+      this.app.workspace.getLeavesOfType(WESIGHT_XIAOHONGSHU_VIEW_TYPE)[0] ?? null;
+    if (!leaf) {
+      leaf = this.app.workspace.getRightLeaf(false);
+      await leaf?.setViewState({
+        type: WESIGHT_XIAOHONGSHU_VIEW_TYPE,
+        active: true,
+        state: { filePath: file.path, activeSection: 'copy', activePlatform: 'quick' },
+      });
+    }
+    if (!leaf) {
+      new Notice('无法打开图文动态工作台。');
+      return;
+    }
+    if (leaf.view instanceof XiaohongshuWorkbenchView) await leaf.view.showQuick(file);
     await this.app.workspace.revealLeaf(leaf);
   }
 
@@ -504,6 +607,17 @@ export default class WeSightPlugin extends Plugin {
         this.shareActions.set(view, action);
         this.shareActionElements.add(action);
       }
+      const existingXiaohongshu = this.xiaohongshuActions.get(view);
+      if (!existingXiaohongshu?.isConnected) {
+        const action = view.addAction('notebook-pen', '转为图文', () => {
+          if (view.file?.extension === 'md') void this.activateXiaohongshuWorkbench(view.file);
+        });
+        action.classList.add('wesight-note-transform-action');
+        action.setAttribute('aria-label', '转为图文');
+        action.setAttribute('data-tooltip-position', 'bottom');
+        this.xiaohongshuActions.set(view, action);
+        this.shareActionElements.add(action);
+      }
       const existingKnowledge = this.knowledgeActions.get(view);
       if (!existingKnowledge?.isConnected) {
         const action = view.addAction('brain', '收录到知识大脑', () => {
@@ -597,6 +711,15 @@ function normalizeSettings(value: Partial<WeSightObsidianSettings> | null | unde
     wechatCustomThemeDescription: typeof value?.wechatCustomThemeDescription === 'string'
       ? value.wechatCustomThemeDescription
       : '',
+    multiPublishPlatforms: Array.isArray(value?.multiPublishPlatforms)
+      ? MULTI_PLATFORM_IDS.filter(platformId => value.multiPublishPlatforms?.includes(platformId))
+      : [...DEFAULT_SETTINGS.multiPublishPlatforms],
+    multiPublishPairing: value?.multiPublishPairing
+      && typeof value.multiPublishPairing.clientId === 'string'
+      && typeof value.multiPublishPairing.secret === 'string'
+      && typeof value.multiPublishPairing.pairedAt === 'string'
+      ? value.multiPublishPairing
+      : null,
   };
 }
  import { vaultPluginDir } from './paths';

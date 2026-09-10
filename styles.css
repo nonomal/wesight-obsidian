@@ -1,4 +1,5 @@
 .wesight-view {
+  container: wesight-chat / inline-size;
   --wesight-brand: #d97757;
   --wesight-brand-rgb: 217, 119, 87;
   --wesight-brand-claude: #d97757;
@@ -73,9 +74,58 @@ body.theme-light .wesight-view {
 .wesight-header-actions {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   flex: 0 0 auto;
   margin-inline-start: auto;
+}
+
+.wesight-header-action-divider {
+  width: 1px;
+  height: 18px;
+  background: var(--background-modifier-border);
+  margin-inline: 2px;
+}
+
+button.wesight-transform-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 10px;
+  border: 1px solid #d97757;
+  border-radius: 7px;
+  background: #d97757;
+  color: #fff;
+  box-shadow: none;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+button.wesight-transform-btn:hover { background: #c56547; border-color: #c56547; }
+button.wesight-transform-btn:focus-visible { outline: 2px solid var(--text-normal); outline-offset: 2px; }
+.wesight-transform-icon { display: flex; flex: 0 0 auto; }
+.wesight-transform-icon svg { width: 16px; height: 16px; stroke-width: 1.75px; }
+.wesight-header button.wesight-wechat-publish-btn,
+.wesight-header button.wesight-share-btn { border-radius: 7px; white-space: nowrap; }
+
+@container wesight-chat (max-width: 540px) {
+  .wesight-header .wesight-wechat-publish-label,
+  .wesight-header .wesight-share-btn-label { display: none; }
+  .wesight-header button.wesight-wechat-publish-btn,
+  .wesight-header button.wesight-share-btn { padding-inline: 6px; }
+}
+
+@container wesight-chat (max-width: 380px) {
+  .wesight-header .wesight-title-text { display: none; }
+  .wesight-header-actions { gap: 6px; }
+  .wesight-header { padding-inline: 8px; }
+}
+
+@container wesight-chat (max-width: 320px) {
+  .wesight-transform-label { display: none; }
+  button.wesight-transform-btn { padding-inline: 6px; }
 }
 
 .wesight-runtime-status {
@@ -2371,6 +2421,14 @@ button.wesight-provider-icon-btn svg {
   color: #2563eb;
 }
 
+.wesight-note-transform-action {
+  color: var(--text-muted);
+}
+
+.wesight-note-transform-action:hover {
+  color: #d97757;
+}
+
 .wesight-share-backdrop {
   position: fixed;
   inset: 0;
@@ -2423,7 +2481,7 @@ button.wesight-provider-icon-btn svg {
 
 .wesight-share-tabs {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   min-height: 52px;
   padding: 0 20px;
   border-bottom: 1px solid var(--background-modifier-border);
@@ -2465,6 +2523,4103 @@ button.wesight-share-tab.is-active {
 
 button.wesight-share-tab.is-active::after {
   background: #2563eb;
+}
+
+.wesight-share-body.is-multi-platform {
+  gap: 12px;
+}
+
+.wesight-multi-loading {
+  display: flex;
+  min-height: 120px;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.wesight-multi-loading svg,
+.wesight-multi-task-row.is-opening .wesight-multi-task-icon svg,
+.wesight-multi-task-row.is-filling .wesight-multi-task-icon svg {
+  animation: wesight-spin 1.1s linear infinite;
+}
+
+.wesight-multi-loading.is-auth {
+  min-height: 96px;
+}
+
+.wesight-multi-article {
+  display: grid;
+  grid-template-columns: 38px 1fr;
+  align-items: center;
+  gap: 10px;
+}
+
+.wesight-multi-article-icon {
+  display: flex;
+  width: 38px;
+  height: 38px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9px;
+  background: rgba(217, 119, 87, 0.12);
+  color: #d97757;
+}
+
+.wesight-multi-article > div:last-child {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+
+.wesight-multi-article span {
+  color: var(--text-muted);
+  font-size: 10px;
+}
+
+.wesight-multi-article strong {
+  overflow: hidden;
+  font-size: 14px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wesight-multi-login-gate {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid rgba(217, 119, 87, 0.3);
+  border-radius: 11px;
+  background: rgba(217, 119, 87, 0.055);
+}
+
+.wesight-multi-login-heading {
+  display: grid;
+  grid-template-columns: 32px 1fr;
+  align-items: center;
+  gap: 9px;
+}
+
+.wesight-multi-login-heading > span {
+  display: flex;
+  width: 32px;
+  height: 32px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: rgba(217, 119, 87, 0.14);
+  color: #d97757;
+}
+
+.wesight-multi-login-heading > span svg {
+  width: 17px;
+}
+
+.wesight-multi-login-heading > div {
+  display: grid;
+  gap: 2px;
+}
+
+.wesight-multi-login-heading strong {
+  font-size: 12px;
+}
+
+.wesight-multi-login-heading div span {
+  color: var(--text-muted);
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.wesight-multi-install-guide {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid rgba(217, 119, 87, 0.3);
+  border-radius: 11px;
+  background: rgba(217, 119, 87, 0.055);
+}
+
+.wesight-multi-install-heading {
+  display: grid;
+  grid-template-columns: 32px 1fr;
+  align-items: center;
+  gap: 9px;
+}
+
+.wesight-multi-install-heading > span {
+  display: flex;
+  width: 32px;
+  height: 32px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: rgba(217, 119, 87, 0.14);
+  color: #d97757;
+}
+
+.wesight-multi-install-heading > span svg {
+  width: 17px;
+}
+
+.wesight-multi-install-heading > div {
+  display: grid;
+  gap: 2px;
+}
+
+.wesight-multi-install-heading strong {
+  font-size: 12px;
+}
+
+.wesight-multi-install-heading div span {
+  color: var(--text-muted);
+  font-size: 9px;
+  line-height: 1.4;
+}
+
+.wesight-multi-install-steps {
+  display: grid;
+  overflow: hidden;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 9px;
+  background: var(--background-primary);
+}
+
+.wesight-multi-install-step {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 9px;
+  border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.wesight-multi-install-step:last-child {
+  border-bottom: 0;
+}
+
+.wesight-multi-install-number {
+  display: flex;
+  width: 20px;
+  height: 20px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: rgba(217, 119, 87, 0.13);
+  color: #bd5f3f;
+  font-size: 9px;
+  font-weight: 750;
+}
+
+.wesight-multi-install-copy {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+
+.wesight-multi-install-copy strong {
+  font-size: 10px;
+}
+
+.wesight-multi-install-copy span {
+  color: var(--text-muted);
+  font-size: 9px;
+  line-height: 1.42;
+}
+
+button.wesight-multi-install-action {
+  display: inline-flex;
+  min-height: 27px;
+  align-items: center;
+  gap: 4px;
+  padding: 0 7px;
+  border: 1px solid rgba(217, 119, 87, 0.34);
+  border-radius: 6px;
+  background: rgba(217, 119, 87, 0.08);
+  box-shadow: none;
+  color: #bd5f3f;
+  font-size: 9px;
+  white-space: nowrap;
+}
+
+button.wesight-multi-install-action svg {
+  width: 12px;
+}
+
+button.wesight-multi-install-continue {
+  width: 100%;
+}
+
+.wesight-multi-install-footnote {
+  color: var(--text-faint);
+  font-size: 9px;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.wesight-multi-connection {
+  display: grid;
+  grid-template-columns: 28px 1fr auto;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 10px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 9px;
+  background: var(--background-secondary);
+  color: var(--text-muted);
+}
+
+.wesight-multi-connection.is-connected {
+  border-color: rgba(46, 167, 101, 0.28);
+  background: rgba(46, 167, 101, 0.08);
+  color: #278151;
+}
+
+.wesight-multi-connection > span svg {
+  width: 17px;
+}
+
+.wesight-multi-connection > div {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+
+.wesight-multi-connection strong {
+  color: var(--text-normal);
+  font-size: 11px;
+}
+
+.wesight-multi-connection > div span {
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.wesight-multi-section-heading {
+  display: flex;
+  min-height: 26px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.wesight-multi-section-heading strong {
+  font-size: 12px;
+}
+
+.wesight-multi-section-title {
+  display: grid;
+  gap: 1px;
+}
+
+.wesight-multi-section-title > span {
+  color: var(--text-muted);
+  font-size: 9px;
+}
+
+.wesight-multi-section-heading > span {
+  color: #d97757;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+button.wesight-multi-link-button {
+  padding: 3px 5px;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  color: #d97757;
+  font-size: 10px;
+}
+
+.wesight-multi-platform-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  max-height: 226px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-right: 2px;
+}
+
+.wesight-multi-platform {
+  display: grid;
+  grid-template-columns: 22px 1fr;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 9px;
+  background: var(--background-primary);
+  cursor: pointer;
+}
+
+.wesight-multi-platform.is-selected {
+  border-color: rgba(217, 119, 87, 0.55);
+  background: rgba(217, 119, 87, 0.08);
+}
+
+.wesight-multi-platform input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.wesight-multi-checkbox {
+  display: flex;
+  width: 20px;
+  height: 20px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  color: var(--text-faint);
+}
+
+.wesight-multi-platform.is-selected .wesight-multi-checkbox {
+  background: #d97757;
+  color: white;
+}
+
+.wesight-multi-checkbox svg {
+  width: 13px;
+}
+
+.wesight-multi-platform > div {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+
+.wesight-multi-platform strong {
+  font-size: 12px;
+}
+
+.wesight-multi-platform > div span {
+  overflow: hidden;
+  color: var(--text-muted);
+  font-size: 9px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Xiaohongshu content transformation workbench */
+.workspace-leaf-content[data-type="wesight-xiaohongshu-workbench"] .view-content {
+  padding: 0;
+  overflow: hidden;
+}
+
+.wesight-xhs-ai-studio {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 0;
+}
+
+.wesight-xhs-ai-studio .wesight-xhs-category-grid {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 3px;
+}
+
+.wesight-xhs-ai-studio .wesight-xhs-category {
+  flex: 1 0 80px;
+  min-height: 34px;
+  padding: 8px 10px;
+  border-radius: 6px;
+}
+
+.wesight-xhs-ai-studio .wesight-xhs-category .wesight-xhs-category-visual,
+.wesight-xhs-ai-studio .wesight-xhs-category > span {
+  display: none;
+}
+
+.wesight-xhs-ai-studio .wesight-xhs-category.is-selected {
+  background: #d97757;
+  color: white;
+}
+
+.wesight-xhs-ai-toolbar,
+.wesight-xhs-ai-gallery-heading,
+.wesight-xhs-ai-gallery-heading > div,
+.wesight-xhs-ai-footer,
+.wesight-xhs-ai-card-actions,
+.wesight-xhs-ai-references {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.wesight-xhs-ai-toolbar {
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.wesight-xhs-ai-toolbar select,
+.wesight-xhs-ai-toolbar > button {
+  flex: 0 1 210px;
+  max-width: 48%;
+  min-height: 36px;
+  box-shadow: none;
+}
+
+.wesight-xhs-ai-toolbar select,
+.wesight-xhs-ai-toolbar > button,
+.wesight-xhs-ai-gallery-heading select {
+  background-color: var(--background-primary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 6px;
+}
+
+.wesight-xhs-ai-gallery-heading {
+  justify-content: space-between;
+  flex-wrap: wrap;
+  font-size: 14px;
+}
+
+.wesight-xhs-ai-gallery {
+  display: flex;
+  align-items: stretch;
+  gap: 16px;
+  overflow-x: auto;
+  padding-bottom: 12px;
+  scroll-snap-type: x proximity;
+}
+
+.wesight-xhs-ai-card {
+  flex: 0 0 clamp(154px, 24%, 230px);
+  min-width: 0;
+  scroll-snap-align: start;
+}
+
+.wesight-xhs-ai-card .wesight-xhs-ai-image {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 4;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  overflow: hidden;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 10px;
+  background: var(--background-secondary);
+  padding: 0;
+  box-shadow: none;
+  color: var(--text-muted);
+}
+
+.wesight-xhs-ai-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.wesight-xhs-ai-number {
+  position: absolute;
+  left: 8px;
+  bottom: 8px;
+  padding: 3px 6px;
+  border-radius: 4px;
+  background: var(--background-primary);
+  color: var(--text-normal);
+  font-size: 12px;
+}
+
+.wesight-xhs-ai-pending {
+  position: absolute;
+  top: 8px;
+  background: var(--background-primary);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.wesight-xhs-ai-card-actions {
+  justify-content: space-between;
+  gap: 2px;
+  margin-top: 10px;
+}
+
+.wesight-xhs-ai-card-actions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px 4px;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.wesight-xhs-ai-card-actions svg { width: 14px; height: 14px; }
+
+.wesight-xhs-ai-gallery .wesight-xhs-ai-add {
+  flex: 0 0 110px;
+  height: auto;
+  align-self: stretch;
+  margin-bottom: 36px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+  border: 1px dashed var(--background-modifier-border);
+  border-radius: 10px;
+  background: var(--background-secondary);
+  box-shadow: none;
+  color: var(--text-muted);
+}
+
+.wesight-xhs-ai-settings {
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 8px;
+  padding: 14px 16px;
+}
+
+.wesight-xhs-ai-settings summary { cursor: pointer; font-size: 14px; }
+.wesight-xhs-ai-settings p { font-size: 12px; color: var(--text-muted); }
+.wesight-xhs-ai-settings textarea { width: 100%; margin: 12px 0; resize: vertical; min-height: 80px; }
+.wesight-xhs-ai-references { flex-wrap: wrap; }
+.wesight-xhs-ai-references button { height: auto; min-height: 32px; }
+.wesight-xhs-ai-references img { width: 44px; height: 44px; object-fit: cover; margin-right: 5px; }
+.wesight-xhs-ai-footer > button { flex: 1; min-height: 40px; }
+.wesight-xhs-ai-hint { font-size: 12px; color: var(--text-muted); }
+.wesight-xhs-ai-progress { width: 100%; accent-color: #d97757; }
+.wesight-xhs-ai-lightbox img { width: 100%; max-height: 75vh; object-fit: contain; }
+.wesight-xhs-ai-reference-picker { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.wesight-xhs-ai-reference-picker button { height: auto; padding: 5px; }
+.wesight-xhs-ai-reference-picker img { width: 100%; height: 110px; object-fit: contain; }
+
+.wesight-xhs-view-container,
+.wesight-xhs-workbench {
+  height: 100%;
+}
+
+.wesight-xhs-workbench {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  background: var(--background-primary);
+  color: var(--text-normal);
+  font-size: 13px;
+  container-type: inline-size;
+}
+
+.wesight-xhs-header {
+  display: flex;
+  min-height: 98px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 13px 18px;
+  border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.wesight-xhs-brand {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 14px;
+}
+
+.wesight-xhs-brand img {
+  width: 66px;
+  height: 66px;
+  flex: 0 0 auto;
+  object-fit: contain;
+}
+
+.wesight-xhs-brand-copy {
+  display: grid;
+  min-width: 0;
+  gap: 9px;
+}
+
+.wesight-xhs-brand-copy > strong {
+  overflow: hidden;
+  font-size: 20px;
+  font-weight: 760;
+  letter-spacing: -0.02em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wesight-xhs-header-actions {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 8px;
+}
+
+.wesight-xhs-platform-badge {
+  display: inline-flex;
+  min-height: 29px;
+  align-items: center;
+  gap: 5px;
+  padding: 0 10px;
+  border: 1px solid rgba(255, 36, 66, 0.3);
+  border-radius: 999px;
+  background: rgba(255, 36, 66, 0.08);
+  color: #ef233c;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+button.wesight-xhs-platform-badge {
+  cursor: pointer;
+  border-color: var(--background-modifier-border);
+  background: var(--background-secondary);
+  box-shadow: none;
+  color: var(--text-muted);
+}
+
+button.wesight-xhs-platform-badge.is-active {
+  border-color: rgba(217, 119, 87, 0.52);
+  background: rgba(217, 119, 87, 0.1);
+  color: #c65f3f;
+}
+
+.wesight-quick-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 2px 0 4px;
+}
+
+.wesight-quick-heading > div:first-child {
+  display: grid;
+  min-width: 0;
+  gap: 4px;
+}
+
+.wesight-quick-heading > div:first-child strong {
+  font-size: 18px;
+  font-weight: 760;
+  letter-spacing: -0.025em;
+}
+
+.wesight-quick-heading > div:first-child span {
+  color: var(--text-muted);
+  font-size: 10px;
+}
+
+button.wesight-quick-engine {
+  display: inline-flex;
+  min-height: 30px;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 5px;
+  padding: 0 2px 0 8px;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--text-muted);
+  font-size: 10px;
+}
+
+.wesight-quick-membership-notice {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 16px;
+  border: 1px solid rgba(217, 119, 87, 0.12);
+  border-radius: 8px;
+  background: rgba(217, 119, 87, 0.065);
+}
+
+.wesight-quick-membership-icon {
+  align-self: flex-start;
+  color: #d97757;
+}
+
+.wesight-quick-membership-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.wesight-quick-membership-copy {
+  flex: 1 1 200px;
+  min-width: 0;
+}
+
+.wesight-quick-membership-copy strong {
+  color: var(--text-normal);
+  font-size: 16px;
+  font-weight: 650;
+}
+
+.theme-light .wesight-quick-membership-copy strong {
+  color: #b34e30;
+}
+
+.wesight-quick-membership-copy p {
+  margin: 5px 0 0;
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.wesight-quick-membership-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-left: auto;
+}
+
+.wesight-quick-membership-actions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 34px;
+  padding: 5px 10px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 6px;
+  background: var(--background-primary);
+  box-shadow: none;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.wesight-quick-membership-actions button.wesight-quick-membership-learn {
+  border-color: transparent;
+  background: transparent;
+  color: var(--text-normal);
+}
+
+.theme-light .wesight-quick-membership-actions button.wesight-quick-membership-learn {
+  color: #b34e30;
+}
+
+.wesight-quick-membership-actions button:hover {
+  background: rgba(217, 119, 87, 0.12);
+}
+
+.wesight-quick-membership-actions button:focus-visible {
+  outline: 2px solid #d97757;
+  outline-offset: 2px;
+}
+
+.wesight-quick-membership-actions svg {
+  width: 14px;
+  height: 14px;
+}
+
+button.wesight-quick-engine strong {
+  color: var(--text-normal);
+  font-size: 10px;
+  font-weight: 670;
+}
+
+button.wesight-quick-engine svg {
+  width: 12px;
+  height: 12px;
+}
+
+.wesight-quick-platform-bar {
+  display: flex;
+  min-height: 38px;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 11px;
+  border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.wesight-quick-platform-bar > span {
+  flex: 0 0 auto;
+  color: var(--text-muted);
+  font-size: 10px;
+}
+
+.wesight-quick-platform-list {
+  display: flex;
+  min-width: 0;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.wesight-quick-platform-list button {
+  display: inline-flex;
+  min-height: 27px;
+  align-items: center;
+  gap: 5px;
+  padding: 0 9px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: transparent;
+  box-shadow: none;
+  color: var(--text-muted);
+  font-size: 10px;
+}
+
+.wesight-quick-platform-list button.is-selected {
+  border-color: rgba(217, 119, 87, 0.3);
+  background: rgba(217, 119, 87, 0.08);
+  color: #c65f3f;
+  font-weight: 680;
+}
+
+.wesight-quick-platform-list button svg {
+  width: 13px;
+  height: 13px;
+}
+
+.wesight-quick-copy-mode {
+  display: grid;
+  grid-template-columns: auto minmax(188px, 270px) minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  padding: 0 0 11px;
+  border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.wesight-quick-copy-mode > span:first-child {
+  color: var(--text-muted);
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+.wesight-quick-copy-mode-control {
+  display: grid;
+  overflow: hidden;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  padding: 2px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 8px;
+  background: var(--background-secondary);
+}
+
+.wesight-quick-copy-mode-control button {
+  min-height: 29px;
+  padding: 0 15px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  box-shadow: none;
+  color: var(--text-muted);
+  font-size: 10px;
+  font-weight: 620;
+}
+
+.wesight-quick-copy-mode-control button.is-selected {
+  background: var(--background-primary);
+  box-shadow: 0 1px 3px rgba(42, 36, 32, 0.1);
+  color: #d4613c;
+  font-weight: 720;
+}
+
+.wesight-quick-copy-mode-control button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.wesight-quick-copy-mode-note {
+  overflow: hidden;
+  color: var(--text-muted);
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wesight-quick-section-heading {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 10px;
+  margin-top: 2px;
+}
+
+.wesight-quick-section-heading.is-generated {
+  margin-top: 4px;
+}
+
+.wesight-quick-section-heading > div:first-child {
+  display: flex;
+  min-width: 0;
+  align-items: baseline;
+  gap: 9px;
+}
+
+.wesight-quick-section-heading strong {
+  font-size: 12px;
+  font-weight: 730;
+}
+
+.wesight-quick-section-heading > div:first-child span {
+  color: var(--text-muted);
+  font-size: 10px;
+}
+
+.wesight-quick-recommendation {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #d4613c;
+  font-size: 10px;
+  font-weight: 650;
+}
+
+.wesight-quick-recommendation svg {
+  width: 14px;
+  height: 14px;
+  fill: #ef6c43;
+  color: #ef6c43;
+  stroke: white;
+  stroke-width: 2.4;
+}
+
+button.wesight-quick-clear {
+  min-height: 26px;
+  padding: 0 3px;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--text-muted);
+  font-size: 10px;
+}
+
+button.wesight-quick-clear:disabled {
+  opacity: 0.45;
+}
+
+.wesight-quick-image-carousel {
+  position: relative;
+  min-width: 0;
+}
+
+.wesight-quick-image-viewport {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.wesight-quick-image-grid {
+  display: flex;
+  min-width: 0;
+  gap: 10px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 2px 2px 5px;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.wesight-quick-image-grid.is-restoring-scroll {
+  scroll-behavior: auto;
+}
+
+.wesight-quick-image-grid::-webkit-scrollbar {
+  display: none;
+}
+
+button.wesight-quick-carousel-arrow {
+  position: absolute;
+  top: -34px;
+  z-index: 2;
+  display: inline-flex;
+  width: 25px;
+  min-width: 25px;
+  height: 25px;
+  min-height: 25px;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 7px;
+  background: var(--background-primary);
+  box-shadow: none;
+  color: var(--text-muted);
+}
+
+button.wesight-quick-carousel-arrow.is-previous {
+  right: 34px;
+}
+
+button.wesight-quick-carousel-arrow.is-next {
+  right: 3px;
+}
+
+button.wesight-quick-carousel-arrow svg {
+  width: 13px;
+  height: 13px;
+}
+
+button.wesight-quick-carousel-arrow:disabled {
+  cursor: default;
+  opacity: 0.35;
+}
+
+.wesight-quick-carousel-counter {
+  position: absolute;
+  top: -28px;
+  right: 70px;
+  color: var(--text-muted);
+  font-size: 9px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+button.wesight-quick-image {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  width: auto;
+  height: auto;
+  min-width: 104px;
+  min-height: 84px;
+  flex: 0 0 clamp(104px, 20%, 142px);
+  aspect-ratio: 1.22 / 1;
+  padding: 0;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 8px;
+  background: var(--background-secondary);
+  box-shadow: none;
+  scroll-snap-align: start;
+}
+
+button.wesight-quick-image.is-selected {
+  border-color: #ea6842;
+  box-shadow: 0 0 0 2px rgba(234, 104, 66, 0.13);
+}
+
+button.wesight-quick-image[draggable="true"] {
+  cursor: grab;
+}
+
+button.wesight-quick-image[draggable="true"]:active {
+  cursor: grabbing;
+}
+
+button.wesight-quick-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.wesight-quick-image-marker {
+  position: absolute;
+  bottom: 6px;
+  left: 6px;
+  display: inline-flex;
+  width: 20px;
+  height: 20px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  border-radius: 6px;
+  background: rgba(28, 31, 36, 0.72);
+  color: white;
+  font-size: 10px;
+  font-weight: 760;
+}
+
+.wesight-quick-image-marker svg {
+  width: 13px;
+  height: 13px;
+}
+
+.wesight-quick-image-check {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  display: inline-flex;
+  width: 20px;
+  height: 20px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #6b7280;
+}
+
+button.wesight-quick-image.is-selected .wesight-quick-image-check {
+  background: #ed6b43;
+  color: white;
+}
+
+.wesight-quick-image-check svg {
+  width: 13px;
+  height: 13px;
+}
+
+.wesight-quick-image-recommended {
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  display: inline-flex;
+  min-height: 19px;
+  align-items: center;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: rgba(255, 243, 237, 0.94);
+  color: #e26540;
+  font-size: 8px;
+  font-weight: 720;
+}
+
+.wesight-quick-image-recommended.is-generated {
+  background: rgba(239, 246, 255, 0.94);
+  color: #2767a8;
+}
+
+.wesight-quick-empty {
+  display: flex;
+  min-height: 118px;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 1px dashed var(--background-modifier-border);
+  border-radius: 8px;
+  color: var(--text-muted);
+  font-size: 10px;
+}
+
+.wesight-quick-empty svg {
+  width: 16px;
+  height: 16px;
+}
+
+.wesight-quick-supplement {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: stretch;
+  gap: 9px;
+  padding-top: 4px;
+}
+
+.wesight-quick-supplement > strong {
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.wesight-quick-supplement > div:not(.wesight-quick-supplement-note) {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.wesight-quick-supplement > div > button {
+  display: inline-flex;
+  min-height: 46px;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 1px dashed var(--background-modifier-border-hover);
+  border-radius: 8px;
+  background: transparent;
+  box-shadow: none;
+  color: var(--text-normal);
+  font-size: 10px;
+  font-weight: 620;
+}
+
+.wesight-quick-supplement > div > button:hover,
+.wesight-quick-supplement > div > button:focus-visible {
+  border-color: rgba(217, 119, 87, 0.5);
+  color: #c65f3f;
+}
+
+.wesight-quick-supplement > div > button svg {
+  width: 15px;
+  height: 15px;
+  color: #d97757;
+}
+
+.wesight-quick-supplement-note {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--text-muted);
+  font-size: 9px;
+}
+
+.wesight-quick-supplement-note svg {
+  width: 12px;
+  height: 12px;
+}
+
+.wesight-quick-copy-preview {
+  display: grid;
+  gap: 0;
+  padding-top: 10px;
+  border-top: 1px solid var(--background-modifier-border);
+}
+
+.wesight-quick-copy-mode + .wesight-quick-copy-preview {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.wesight-quick-copy-preview-heading {
+  display: flex;
+  min-height: 31px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.wesight-quick-copy-preview-heading > strong {
+  font-size: 12px;
+  font-weight: 730;
+}
+
+.wesight-quick-copy-preview-heading > button {
+  display: inline-flex;
+  min-height: 27px;
+  align-items: center;
+  gap: 5px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  color: #d4613c;
+  font-size: 10px;
+  font-weight: 650;
+}
+
+.wesight-quick-copy-preview-heading > button svg {
+  width: 12px;
+  height: 12px;
+}
+
+.wesight-quick-copy-tabs {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  margin-top: 3px;
+}
+
+.wesight-quick-copy-tabs > button {
+  position: relative;
+  display: inline-flex;
+  min-width: 96px;
+  min-height: 34px;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 0 12px;
+  border: 1px solid transparent;
+  border-bottom: 0;
+  border-radius: 8px 8px 0 0;
+  background: var(--background-secondary);
+  box-shadow: none;
+  color: var(--text-muted);
+  font-size: 10px;
+}
+
+.wesight-quick-copy-tabs > button.is-selected {
+  z-index: 1;
+  border-color: var(--background-modifier-border);
+  background: var(--background-primary);
+  color: #d4613c;
+  font-weight: 720;
+}
+
+.wesight-quick-copy-tabs > button > span:first-child svg {
+  width: 13px;
+  height: 13px;
+}
+
+.wesight-quick-copy-tab-status {
+  display: inline-flex;
+  align-items: center;
+  color: #a8adb4;
+}
+
+.wesight-quick-copy-tab-status.is-ready {
+  color: #5d9c72;
+}
+
+.wesight-quick-copy-tab-status.is-failed {
+  color: #d55b52;
+}
+
+.wesight-quick-copy-tab-status.is-generating svg {
+  animation: wesight-spin 1.1s linear infinite;
+}
+
+.wesight-quick-copy-tab-status svg {
+  width: 12px;
+  height: 12px;
+}
+
+.wesight-quick-copy-editor {
+  display: grid;
+  gap: 0;
+  padding: 10px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 0 8px 8px;
+  background: var(--background-primary);
+  box-shadow: 0 2px 8px rgba(48, 41, 36, 0.035);
+}
+
+.wesight-quick-copy-title-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 0 0 8px;
+  border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.wesight-quick-copy-title-row input,
+.wesight-quick-copy-meta input,
+.wesight-quick-copy-body {
+  width: 100%;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--text-normal);
+  font-size: 11px;
+}
+
+.wesight-quick-copy-title-row input {
+  min-height: 28px;
+  padding: 0 2px;
+  font-weight: 680;
+}
+
+.wesight-quick-copy-title-row > span {
+  color: var(--text-muted);
+  font-size: 9px;
+  font-variant-numeric: tabular-nums;
+}
+
+.wesight-quick-copy-body {
+  min-height: 116px;
+  padding: 10px 2px 8px;
+  line-height: 1.65;
+  resize: vertical;
+}
+
+.wesight-quick-copy-meta {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding-top: 8px;
+  border-top: 1px solid var(--background-modifier-border);
+}
+
+.wesight-quick-copy-meta input {
+  min-height: 28px;
+  padding: 0 2px;
+  color: #596778;
+}
+
+.wesight-quick-copy-meta > span {
+  color: var(--text-muted);
+  font-size: 9px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.wesight-quick-copy-hint {
+  padding-top: 7px;
+  color: var(--text-muted);
+  font-size: 9px;
+}
+
+.wesight-quick-destinations {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 9px;
+  margin-top: 10px;
+}
+
+.wesight-quick-destinations > button {
+  display: grid;
+  min-width: 0;
+  min-height: 39px;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 6px;
+  padding: 0 9px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 8px;
+  background: var(--background-primary);
+  box-shadow: none;
+  color: var(--text-normal);
+  font-size: 10px;
+  text-align: left;
+}
+
+.wesight-quick-destination-icon,
+.wesight-quick-destination-edit {
+  display: inline-flex;
+  align-items: center;
+  color: #d4613c;
+}
+
+.wesight-quick-destination-icon svg,
+.wesight-quick-destination-edit svg {
+  width: 13px;
+  height: 13px;
+}
+
+.wesight-quick-destination-state {
+  color: var(--text-muted);
+  font-size: 9px;
+  white-space: nowrap;
+}
+
+.wesight-quick-destination-state.is-ready {
+  color: #5b8f6b;
+}
+
+.wesight-quick-destination-state.is-failed {
+  color: #c74f47;
+}
+
+.wesight-quick-destination-state.is-generating {
+  color: #b46c38;
+}
+
+.wesight-quick-destination-edit {
+  color: var(--text-muted);
+}
+
+.wesight-quick-footer {
+  position: sticky;
+  bottom: 22px;
+  z-index: 4;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(250px, 0.9fr);
+  align-items: center;
+  gap: 14px;
+  margin-top: auto;
+  padding: 12px 0 0;
+  border-top: 1px solid var(--background-modifier-border);
+  background: var(--background-primary);
+}
+
+.wesight-quick-footer-status {
+  display: grid;
+  min-width: 0;
+  gap: 4px;
+}
+
+.wesight-quick-footer-status strong,
+.wesight-quick-footer-status span {
+  overflow: hidden;
+  color: var(--text-muted);
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wesight-quick-footer-status strong {
+  color: var(--text-normal);
+}
+
+.wesight-quick-footer-status progress {
+  width: min(300px, 100%);
+  height: 6px;
+  accent-color: #d97757;
+}
+
+button.wesight-quick-generate {
+  width: 100%;
+  min-height: 46px;
+  border-color: #dd603c;
+  background: #ef633c;
+  font-size: 13px;
+}
+
+button.wesight-xhs-platform-badge:hover,
+button.wesight-xhs-platform-badge:focus-visible {
+  border-color: rgba(217, 119, 87, 0.42);
+  color: #c65f3f;
+}
+
+.wesight-xhs-platform-badge svg {
+  width: 13px;
+  height: 13px;
+}
+
+button.wesight-xhs-subtle-button,
+button.wesight-xhs-secondary-button,
+button.wesight-xhs-primary-button {
+  display: inline-flex;
+  min-height: 34px;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 0 12px;
+  border-radius: 8px;
+  box-shadow: none;
+  font-size: 12px;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+button.wesight-xhs-subtle-button {
+  border: 1px solid var(--background-modifier-border);
+  background: transparent;
+  color: var(--text-muted);
+}
+
+button.wesight-xhs-secondary-button {
+  border: 1px solid var(--background-modifier-border-hover);
+  background: var(--background-primary);
+  color: var(--text-normal);
+}
+
+button.wesight-xhs-primary-button {
+  border: 1px solid #cf6847;
+  background: #d97757;
+  color: white;
+}
+
+button.wesight-xhs-primary-button:hover,
+button.wesight-xhs-primary-button:focus-visible {
+  background: #c96a4b;
+  color: white;
+}
+
+button.wesight-xhs-primary-button.is-compact {
+  min-height: 31px;
+  padding: 0 11px;
+}
+
+button.wesight-xhs-subtle-button svg,
+button.wesight-xhs-secondary-button svg,
+button.wesight-xhs-primary-button svg {
+  width: 14px;
+  height: 14px;
+}
+
+button.wesight-xhs-primary-button:disabled,
+button.wesight-xhs-secondary-button:disabled,
+button.wesight-xhs-subtle-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.wesight-xhs-workflow {
+  display: grid;
+  min-height: 50px;
+  flex: 0 0 auto;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  padding: 0 18px;
+  border-bottom: 1px solid var(--background-modifier-border);
+}
+
+button.wesight-xhs-workflow-step {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+button.wesight-xhs-workflow-step.is-active {
+  color: #d4613c;
+  font-weight: 700;
+}
+
+button.wesight-xhs-workflow-step.is-active::after {
+  position: absolute;
+  right: 18%;
+  bottom: -1px;
+  left: 18%;
+  height: 2px;
+  border-radius: 999px 999px 0 0;
+  background: #d97757;
+  content: '';
+}
+
+.wesight-xhs-step-number {
+  display: inline-flex;
+  width: 20px;
+  height: 20px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  font-size: 10px;
+}
+
+.wesight-xhs-body {
+  display: flex;
+  min-height: 0;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 12px;
+  overflow: auto;
+  padding: 14px 16px 18px;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
+.wesight-xhs-status {
+  display: flex;
+  min-height: 220px;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  color: var(--text-muted);
+}
+
+.wesight-xhs-status > span:first-child svg,
+.wesight-xhs-error > span:first-child svg {
+  width: 18px;
+}
+
+.wesight-xhs-status.is-loading > span:first-child svg,
+.wesight-xhs-recommendation-actions button:disabled svg,
+.wesight-xhs-primary-button:disabled svg[data-lucide="loader-circle"] {
+  animation: wesight-spin 1.1s linear infinite;
+}
+
+.wesight-xhs-error {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr) 28px;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 10px;
+  border: 1px solid rgba(220, 38, 38, 0.22);
+  border-radius: 8px;
+  background: rgba(220, 38, 38, 0.07);
+  color: #b42318;
+  font-size: 11px;
+}
+
+.wesight-xhs-error button {
+  display: flex;
+  width: 26px;
+  height: 26px;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  color: currentColor;
+}
+
+.wesight-xhs-copy-toolbar,
+.wesight-xhs-section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.wesight-xhs-copy-toolbar > div:first-child,
+.wesight-xhs-section-heading > div:first-child {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+
+.wesight-xhs-copy-toolbar strong,
+.wesight-xhs-section-heading strong {
+  font-size: 12px;
+  font-weight: 730;
+}
+
+.wesight-xhs-copy-toolbar > div:first-child span,
+.wesight-xhs-section-heading > div:first-child span,
+.wesight-xhs-section-heading > span {
+  color: var(--text-muted);
+  font-size: 10px;
+  line-height: 1.35;
+}
+
+.wesight-xhs-engine-badge {
+  display: inline-flex;
+  min-height: 30px;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 5px;
+  padding: 0 9px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 7px;
+  background: var(--background-secondary);
+  color: var(--text-muted);
+  font-size: 10px;
+}
+
+.wesight-xhs-engine-badge svg {
+  width: 13px;
+}
+
+.wesight-xhs-engine-badge strong {
+  color: #d4613c;
+  font-size: 11px;
+}
+
+.wesight-xhs-copy-layout {
+  display: grid;
+  min-height: 0;
+  grid-template-columns: minmax(0, 1fr) minmax(210px, 0.36fr);
+  gap: 16px;
+}
+
+.wesight-xhs-copy-fields,
+.wesight-xhs-copy-controls {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.wesight-xhs-copy-controls {
+  padding-left: 16px;
+  border-left: 1px solid var(--background-modifier-border);
+}
+
+.wesight-xhs-copy-controls > span {
+  color: var(--text-muted);
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.wesight-xhs-copy-controls textarea {
+  width: 100%;
+  min-height: 150px;
+  resize: vertical;
+}
+
+.wesight-xhs-field {
+  display: grid;
+  min-width: 0;
+  gap: 7px;
+}
+
+.wesight-xhs-field-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.wesight-xhs-field label,
+.wesight-xhs-setting-field label {
+  color: var(--text-normal);
+  font-size: 11px;
+  font-weight: 680;
+}
+
+.wesight-xhs-field-label span {
+  color: var(--text-muted);
+  font-size: 10px;
+}
+
+.wesight-xhs-field input,
+.wesight-xhs-field textarea,
+.wesight-xhs-setting-field select,
+.wesight-xhs-setting-field textarea,
+.wesight-xhs-copy-controls textarea {
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 8px;
+  background: var(--background-primary);
+  box-shadow: none;
+  color: var(--text-normal);
+  font-size: 12px;
+}
+
+.wesight-xhs-field input,
+.wesight-xhs-setting-field select {
+  min-height: 36px;
+  padding: 0 10px;
+}
+
+.wesight-xhs-field textarea,
+.wesight-xhs-setting-field textarea,
+.wesight-xhs-copy-controls textarea {
+  padding: 9px 10px;
+  line-height: 1.65;
+}
+
+.wesight-xhs-field textarea:focus,
+.wesight-xhs-field input:focus,
+.wesight-xhs-setting-field textarea:focus,
+.wesight-xhs-copy-controls textarea:focus {
+  border-color: rgba(217, 119, 87, 0.65);
+  box-shadow: 0 0 0 2px rgba(217, 119, 87, 0.11);
+}
+
+.wesight-xhs-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.wesight-xhs-tag {
+  display: inline-flex;
+  min-height: 26px;
+  align-items: center;
+  gap: 3px;
+  padding: 0 8px;
+  border: 1px solid rgba(217, 119, 87, 0.24);
+  border-radius: 999px;
+  background: rgba(217, 119, 87, 0.07);
+  color: #b95d3f;
+  font-size: 10px;
+}
+
+.wesight-xhs-tag button {
+  display: flex;
+  width: 16px;
+  height: 16px;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  color: currentColor;
+}
+
+.wesight-xhs-tag button svg {
+  width: 11px;
+}
+
+.wesight-xhs-tag-input {
+  width: min(220px, 100%);
+}
+
+.wesight-xhs-recommendation {
+  display: flex;
+  min-width: 0;
+  min-height: 50px;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border: 1px solid rgba(217, 119, 87, 0.26);
+  border-radius: 9px;
+  background: rgba(217, 119, 87, 0.045);
+  white-space: nowrap;
+}
+
+.wesight-xhs-recommendation-label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #bf5f40;
+  font-size: 10px;
+  font-weight: 740;
+  white-space: nowrap;
+}
+
+.wesight-xhs-recommendation-label svg {
+  width: 15px;
+}
+
+.wesight-xhs-recommendation-summary {
+  display: flex;
+  min-width: 0;
+  flex: 1 1 120px;
+  align-items: center;
+}
+
+.wesight-xhs-recommendation-summary > div {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 6px;
+}
+
+.wesight-xhs-recommendation-summary strong {
+  overflow: hidden;
+  max-width: min(180px, 24cqw);
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wesight-xhs-recommendation-basis {
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.wesight-xhs-recommendation-basis summary {
+  display: inline-flex;
+  min-height: 28px;
+  align-items: center;
+  padding: 0 4px;
+  color: #9a654f;
+  cursor: pointer;
+  font-size: 9.5px;
+  list-style: none;
+  white-space: nowrap;
+}
+
+.wesight-xhs-recommendation-basis summary::-webkit-details-marker {
+  display: none;
+}
+
+.wesight-xhs-recommendation-basis summary:hover,
+.wesight-xhs-recommendation-basis summary:focus-visible,
+.wesight-xhs-recommendation-basis[open] summary {
+  color: #c45f3e;
+  text-decoration: underline;
+}
+
+.wesight-xhs-recommendation-basis-popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  z-index: 20;
+  display: grid;
+  width: min(360px, 62vw);
+  max-height: 220px;
+  gap: 7px;
+  overflow-y: auto;
+  padding: 12px 13px;
+  border: 1px solid rgba(217, 119, 87, 0.28);
+  border-radius: 10px;
+  background: var(--background-primary);
+  box-shadow: 0 12px 30px rgba(40, 30, 24, 0.16);
+  transform: translateX(-50%);
+}
+
+.wesight-xhs-recommendation-basis-popover strong {
+  color: var(--text-normal);
+  font-size: 11px;
+}
+
+.wesight-xhs-recommendation-basis-popover p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 10px;
+  line-height: 1.55;
+}
+
+.wesight-xhs-recommendation-note {
+  padding-top: 6px;
+  border-top: 1px solid var(--background-modifier-border);
+  color: #997057;
+  font-size: 9px;
+}
+
+.wesight-xhs-confidence {
+  display: inline-flex;
+  min-height: 21px;
+  align-items: center;
+  padding: 0 6px;
+  border-radius: 5px;
+  background: rgba(217, 119, 87, 0.14);
+  color: #bc5b3b;
+  font-size: 9px;
+  font-weight: 720;
+}
+
+.wesight-xhs-recommendation-actions {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 6px;
+}
+
+.wesight-xhs-recommendation-actions button.wesight-xhs-primary-button,
+.wesight-xhs-recommendation-actions button.wesight-xhs-subtle-button {
+  min-height: 32px;
+  padding: 0 10px;
+  font-size: 10.5px;
+}
+
+.wesight-xhs-recommendation-alternatives {
+  display: grid;
+  gap: 6px;
+  padding-top: 7px;
+  border-top: 1px solid var(--background-modifier-border);
+  white-space: normal;
+}
+
+.wesight-xhs-recommendation-alternatives > span {
+  color: var(--text-muted);
+  font-size: 9px;
+  font-weight: 650;
+}
+
+.wesight-xhs-recommendation-alternatives button {
+  overflow: hidden;
+  width: 100%;
+  min-height: 29px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.035);
+  box-shadow: none;
+  color: var(--text-muted);
+  font-size: 9px;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.theme-dark .wesight-xhs-recommendation-alternatives button {
+  background: rgba(255, 255, 255, 0.055);
+}
+
+.wesight-xhs-category-section,
+.wesight-xhs-generated-section {
+  display: grid;
+  gap: 9px;
+}
+
+.wesight-xhs-category-section {
+  gap: 0;
+}
+
+.wesight-xhs-category-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 9px;
+}
+
+button.wesight-xhs-category {
+  display: grid;
+  height: auto;
+  min-height: 88px;
+  min-width: 0;
+  gap: 7px;
+  padding: 6px 6px 7px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 8px;
+  background: var(--background-primary);
+  box-shadow: none;
+  color: var(--text-normal);
+  text-align: left;
+}
+
+button.wesight-xhs-category.is-selected {
+  border-color: #d97757;
+  background: rgba(217, 119, 87, 0.045);
+  box-shadow: inset 0 0 0 1px rgba(217, 119, 87, 0.22);
+}
+
+.wesight-xhs-category-visual {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 1.55;
+  border-radius: 6px;
+  background: var(--background-secondary);
+}
+
+.wesight-xhs-category-visual img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 38%;
+}
+
+.wesight-xhs-recommended-marker {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  display: inline-flex;
+  min-height: 18px;
+  align-items: center;
+  padding: 0 5px;
+  border-radius: 5px;
+  background: #d97757;
+  color: white;
+  font-size: 8px;
+  font-weight: 720;
+}
+
+button.wesight-xhs-category > strong {
+  overflow: hidden;
+  font-size: 11px;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+button.wesight-xhs-category > span {
+  display: none;
+}
+
+.wesight-xhs-studio {
+  display: grid;
+  min-height: 372px;
+  grid-template-columns: minmax(220px, 1.2fr) minmax(154px, 0.82fr) minmax(164px, 0.9fr);
+  gap: 12px;
+}
+
+.wesight-xhs-preview-area,
+.wesight-xhs-style-rail,
+.wesight-xhs-image-settings {
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.wesight-xhs-style-rail,
+.wesight-xhs-image-settings {
+  padding-left: 12px;
+  border-left: 1px solid var(--background-modifier-border);
+}
+
+.wesight-xhs-live-preview {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  min-height: 0;
+  aspect-ratio: 3 / 4;
+  align-self: center;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 9px;
+  background: #f7f3ec;
+}
+
+.wesight-xhs-live-preview.has-generated-image {
+  background: var(--background-secondary);
+}
+
+.wesight-xhs-live-preview > img:not(.wesight-xhs-preview-texture) {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.wesight-xhs-typography-preview {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.wesight-xhs-typography-preview-error {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  place-content: center;
+  justify-items: center;
+  gap: 8px;
+  padding: 20px;
+  color: var(--text-muted);
+  font-size: 10px;
+  text-align: center;
+}
+
+.wesight-xhs-typography-preview-error svg {
+  width: 20px;
+  height: 20px;
+}
+
+.wesight-xhs-preview-texture {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.3;
+}
+
+.wesight-xhs-live-preview.is-typography .wesight-xhs-preview-texture,
+.wesight-xhs-live-preview.is-infographic .wesight-xhs-preview-texture,
+.wesight-xhs-live-preview.is-screenshot .wesight-xhs-preview-texture {
+  opacity: 0.16;
+}
+
+.wesight-xhs-preview-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 12% 10%;
+  background: rgba(255, 253, 248, 0.82);
+}
+
+.wesight-xhs-live-preview.is-photography .wesight-xhs-preview-overlay,
+.wesight-xhs-live-preview.is-collage .wesight-xhs-preview-overlay,
+.wesight-xhs-live-preview.is-illustration .wesight-xhs-preview-overlay {
+  justify-content: flex-end;
+  background: rgba(255, 253, 248, 0.72);
+}
+
+.wesight-xhs-preview-text {
+  white-space: pre-wrap;
+  color: #202020;
+  font-size: clamp(16px, 1.55vw, 24px);
+  font-weight: 680;
+  line-height: 1.5;
+  letter-spacing: -0.02em;
+}
+
+.wesight-xhs-style-list {
+  display: grid;
+  min-height: 0;
+  gap: 7px;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+
+button.wesight-xhs-style {
+  display: grid;
+  height: auto;
+  min-height: 50px;
+  flex: 0 0 auto;
+  grid-template-columns: 54px minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  padding: 5px 6px;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  background: transparent;
+  box-shadow: none;
+  color: var(--text-normal);
+  text-align: left;
+}
+
+button.wesight-xhs-style.is-selected {
+  border-color: rgba(217, 119, 87, 0.55);
+  background: rgba(217, 119, 87, 0.07);
+}
+
+button.wesight-xhs-style img {
+  width: 54px;
+  height: 40px;
+  border-radius: 5px;
+  object-fit: cover;
+}
+
+button.wesight-xhs-style > div {
+  display: grid;
+  min-width: 0;
+  gap: 1px;
+}
+
+button.wesight-xhs-style strong {
+  font-size: 10px;
+}
+
+button.wesight-xhs-style span {
+  overflow: hidden;
+  color: var(--text-muted);
+  font-size: 8.5px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wesight-xhs-image-settings {
+  min-height: min-content;
+  gap: 9px;
+}
+
+.wesight-xhs-image-settings > .wesight-xhs-section-heading {
+  min-height: 24px;
+}
+
+button.wesight-xhs-content-generate {
+  width: 100%;
+  min-height: 38px;
+  border-color: #d86542;
+  background: #df6844;
+  color: white;
+  font-size: 11px;
+}
+
+button.wesight-xhs-content-generate:hover:not(:disabled) {
+  border-color: #c95a39;
+  background: #cf5d3c;
+}
+
+.wesight-xhs-content-saved {
+  display: flex;
+  min-height: 29px;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 0 7px;
+  border: 1px solid rgba(217, 119, 87, 0.16);
+  border-radius: 7px;
+  background: rgba(217, 119, 87, 0.045);
+  color: var(--text-muted);
+  font-size: 8.5px;
+  white-space: nowrap;
+}
+
+.wesight-xhs-content-saved svg {
+  width: 12px;
+  height: 12px;
+}
+
+.wesight-xhs-current-page {
+  color: var(--text-normal);
+  font-size: 10.5px;
+  font-weight: 690;
+}
+
+.wesight-xhs-content-editor {
+  display: grid;
+  gap: 8px;
+  padding: 9px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 8px;
+  border-color: rgba(217, 119, 87, 0.34);
+  background: rgba(217, 119, 87, 0.018);
+  box-shadow: 0 4px 13px rgba(68, 47, 36, 0.045);
+}
+
+.wesight-xhs-content-field-heading {
+  display: flex;
+  min-height: 18px;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--text-normal);
+  font-size: 10px;
+  font-weight: 650;
+}
+
+.wesight-xhs-content-sources {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4px;
+}
+
+.wesight-xhs-content-sources button {
+  overflow: hidden;
+  min-width: 0;
+  min-height: 26px;
+  padding: 0 5px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  box-shadow: none;
+  color: var(--text-muted);
+  font-size: 8.5px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wesight-xhs-content-sources button.is-selected {
+  border-color: rgba(217, 119, 87, 0.5);
+  background: rgba(217, 119, 87, 0.07);
+  color: #c45f3e;
+  font-weight: 680;
+}
+
+.wesight-xhs-content-editor textarea {
+  width: 100%;
+  min-height: 58px;
+  padding: 8px 9px;
+  resize: vertical;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 7px;
+  background: var(--background-primary);
+  box-shadow: none;
+  color: var(--text-normal);
+  font-size: 10px;
+  line-height: 1.55;
+}
+
+.wesight-xhs-content-editor textarea:focus {
+  border-color: rgba(217, 119, 87, 0.65);
+  box-shadow: 0 0 0 2px rgba(217, 119, 87, 0.1);
+}
+
+.wesight-xhs-content-counter {
+  color: var(--text-muted);
+  font-size: 8.5px;
+  font-weight: 500;
+}
+
+button.wesight-xhs-content-regenerate {
+  display: inline-flex;
+  min-height: 26px;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  color: #cf6240;
+  font-size: 9px;
+  font-weight: 650;
+}
+
+button.wesight-xhs-content-regenerate svg {
+  width: 12px;
+  height: 12px;
+}
+
+.wesight-xhs-setting-row {
+  display: flex;
+  min-height: 36px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 0 9px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 8px;
+  background: var(--background-primary);
+}
+
+.wesight-xhs-setting-row span {
+  color: var(--text-muted);
+  font-size: 10px;
+}
+
+.wesight-xhs-setting-row strong {
+  overflow: hidden;
+  font-size: 10.5px;
+  font-weight: 650;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wesight-xhs-setting-field {
+  display: grid;
+  gap: 6px;
+}
+
+.wesight-xhs-page-count-field {
+  position: relative;
+  z-index: 1;
+}
+
+.wesight-xhs-page-count-field select {
+  width: 100%;
+}
+
+.wesight-xhs-setting-engine {
+  display: grid;
+  margin-top: 2px;
+}
+
+.wesight-xhs-setting-engine .wesight-xhs-engine-badge {
+  width: 100%;
+  justify-content: center;
+}
+
+.wesight-xhs-setting-field textarea {
+  min-height: 112px;
+  resize: vertical;
+}
+
+.wesight-xhs-generated-strip {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(104px, 1fr));
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+button.wesight-xhs-page-thumb {
+  position: relative;
+  display: flex;
+  overflow: hidden;
+  min-width: 104px;
+  min-height: 108px;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 5px;
+  padding: 10px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 8px;
+  background: var(--background-primary);
+  box-shadow: none;
+  color: var(--text-normal);
+  text-align: left;
+}
+
+button.wesight-xhs-page-thumb.is-selected {
+  border-color: #d97757;
+  box-shadow: inset 0 0 0 1px rgba(217, 119, 87, 0.18);
+}
+
+button.wesight-xhs-page-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+button.wesight-xhs-page-thumb:has(img) {
+  padding: 0;
+}
+
+.wesight-xhs-page-number {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  z-index: 1;
+  display: inline-flex;
+  width: 20px;
+  height: 20px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #b95d3f;
+  font-size: 8px;
+  font-weight: 750;
+}
+
+.wesight-xhs-thumb-text {
+  display: -webkit-box;
+  overflow: hidden;
+  padding-top: 12px;
+  color: var(--text-normal);
+  font-size: 9px;
+  font-weight: 620;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+}
+
+.wesight-xhs-image-footer {
+  position: sticky;
+  bottom: -18px;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 11px 0 0;
+  border-top: 1px solid var(--background-modifier-border);
+  background: var(--background-primary);
+}
+
+.wesight-xhs-generation-status {
+  display: grid;
+  min-width: 0;
+  flex: 1 1 auto;
+  gap: 5px;
+}
+
+.wesight-xhs-generation-status span,
+.wesight-xhs-generation-status strong {
+  overflow: hidden;
+  color: var(--text-muted);
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wesight-xhs-generation-status progress {
+  width: min(320px, 100%);
+  height: 6px;
+  accent-color: #d97757;
+}
+
+.wesight-xhs-footer-actions {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 8px;
+}
+
+.wesight-xhs-review-summary {
+  display: grid;
+  grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.22fr);
+  gap: 16px;
+}
+
+.wesight-xhs-review-copy,
+.wesight-xhs-review-images {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.wesight-xhs-review-copy {
+  padding-right: 16px;
+  border-right: 1px solid var(--background-modifier-border);
+}
+
+.wesight-xhs-review-copy h2 {
+  margin: 0;
+  font-size: 19px;
+  line-height: 1.35;
+}
+
+.wesight-xhs-review-body {
+  display: -webkit-box;
+  overflow: hidden;
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 1.75;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 14;
+}
+
+.wesight-xhs-review-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.wesight-xhs-review-grid a {
+  display: grid;
+  overflow: hidden;
+  gap: 5px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 8px;
+  color: var(--text-normal);
+  text-decoration: none;
+}
+
+.wesight-xhs-review-grid img {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+}
+
+.wesight-xhs-review-grid a span {
+  overflow: hidden;
+  padding: 0 7px 7px;
+  font-size: 9px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wesight-xhs-review-empty {
+  display: flex;
+  min-height: 220px;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed var(--background-modifier-border);
+  border-radius: 9px;
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+.wesight-xhs-review-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--background-modifier-border);
+}
+
+.wesight-xhs-review-footer > div {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 9px;
+}
+
+.wesight-xhs-review-footer > div > span {
+  display: flex;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9px;
+  background: rgba(46, 167, 101, 0.1);
+  color: #278151;
+}
+
+.wesight-xhs-review-footer > div > span svg {
+  width: 17px;
+}
+
+.wesight-xhs-review-footer > div > div {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+
+.wesight-xhs-review-footer strong {
+  font-size: 11px;
+}
+
+.wesight-xhs-review-footer > div > div span {
+  overflow: hidden;
+  color: var(--text-muted);
+  font-size: 9px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wesight-weibo-copy-layout {
+  display: grid;
+  min-height: 0;
+  grid-template-columns: minmax(0, 1.08fr) minmax(238px, 0.92fr);
+  gap: 18px;
+}
+
+.wesight-weibo-copy-fields {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 13px;
+}
+
+.wesight-weibo-copy-fields > .wesight-xhs-engine-badge {
+  align-self: flex-start;
+}
+
+.wesight-weibo-copy-fields > .wesight-xhs-field textarea {
+  height: 170px;
+  min-height: 170px;
+  resize: vertical;
+}
+
+.wesight-weibo-lead-note {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--text-muted);
+  font-size: 10px;
+}
+
+.wesight-weibo-lead-note svg {
+  width: 13px;
+  height: 13px;
+  color: #d97757;
+}
+
+.wesight-weibo-tone-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 7px;
+}
+
+button.wesight-weibo-tone {
+  display: flex;
+  min-width: 0;
+  min-height: 34px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 11px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 8px;
+  background: var(--background-primary);
+  box-shadow: none;
+  color: var(--text-normal);
+  text-align: center;
+}
+
+button.wesight-weibo-tone strong {
+  font-size: 11px;
+}
+
+button.wesight-weibo-tone.is-selected {
+  border-color: rgba(217, 119, 87, 0.55);
+  background: rgba(217, 119, 87, 0.07);
+  color: #c65f3f;
+}
+
+.wesight-weibo-copy-actions {
+  display: grid;
+  gap: 8px;
+}
+
+.wesight-weibo-copy-actions textarea {
+  min-height: 72px;
+  resize: vertical;
+}
+
+.wesight-weibo-prompt-settings {
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 8px;
+  background: var(--background-primary);
+}
+
+.wesight-weibo-prompt-settings summary {
+  padding: 8px 10px;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 10px;
+  list-style-position: inside;
+}
+
+.wesight-weibo-prompt-settings textarea {
+  width: calc(100% - 16px);
+  margin: 0 8px 8px;
+}
+
+.wesight-weibo-preview-panel {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 9px;
+  padding-left: 18px;
+  border-left: 1px solid var(--background-modifier-border);
+}
+
+.wesight-weibo-preview-panel > strong {
+  font-size: 11px;
+}
+
+.wesight-weibo-feed-card {
+  position: sticky;
+  top: 0;
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 12px;
+  background: var(--background-primary);
+  box-shadow: 0 8px 24px rgba(35, 28, 24, 0.06);
+}
+
+.wesight-weibo-feed-account {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.wesight-weibo-feed-avatar {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: #1f2329;
+  object-fit: cover;
+}
+
+.wesight-weibo-feed-account > div {
+  display: grid;
+  gap: 1px;
+}
+
+.wesight-weibo-feed-account strong {
+  font-size: 11px;
+}
+
+.wesight-weibo-feed-account span {
+  color: var(--text-muted);
+  font-size: 8px;
+}
+
+.wesight-weibo-feed-body {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+
+.wesight-weibo-feed-expand {
+  justify-self: end;
+  color: #d97757;
+  font-size: 9px;
+}
+
+.wesight-weibo-feed-images {
+  display: grid;
+  overflow: hidden;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 3px;
+  border-radius: 8px;
+}
+
+.wesight-weibo-feed-images img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+}
+
+.wesight-weibo-feed-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  padding-top: 8px;
+  border-top: 1px solid var(--background-modifier-border);
+  color: var(--text-muted);
+  font-size: 9px;
+  text-align: center;
+}
+
+.wesight-weibo-feed-metrics > span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.wesight-weibo-feed-metrics svg {
+  width: 12px;
+  height: 12px;
+}
+
+.wesight-weibo-section-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--background-modifier-border);
+}
+
+.wesight-weibo-section-footer > span {
+  color: var(--text-muted);
+  font-size: 9px;
+}
+
+.wesight-weibo-section-footer.is-copy {
+  align-items: stretch;
+  flex-direction: column;
+}
+
+.wesight-weibo-section-footer.is-copy > button {
+  width: 100%;
+}
+
+.wesight-weibo-image-actions {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.wesight-weibo-selected-grid,
+.wesight-weibo-library-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.wesight-weibo-image-card,
+button.wesight-weibo-library-item {
+  position: relative;
+  overflow: hidden;
+  min-width: 0;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 10px;
+  background: var(--background-primary);
+  box-shadow: none;
+}
+
+.wesight-weibo-image-card.is-selected {
+  border-color: rgba(217, 119, 87, 0.56);
+  box-shadow: 0 0 0 2px rgba(217, 119, 87, 0.08);
+}
+
+.wesight-weibo-image-card > img,
+button.wesight-weibo-library-item > img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+}
+
+.wesight-weibo-image-order,
+.wesight-weibo-cover-label,
+button.wesight-weibo-library-item > span {
+  position: absolute;
+  top: 6px;
+  display: inline-flex;
+  min-width: 20px;
+  min-height: 20px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: rgba(31, 35, 41, 0.82);
+  color: white;
+  font-size: 8px;
+}
+
+.wesight-weibo-image-order {
+  left: 6px;
+}
+
+.wesight-weibo-cover-label,
+button.wesight-weibo-library-item > span {
+  right: 6px;
+}
+
+.wesight-weibo-image-card-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-top: 1px solid var(--background-modifier-border);
+}
+
+.wesight-weibo-image-card-actions button {
+  display: flex;
+  min-height: 30px;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  border-right: 1px solid var(--background-modifier-border);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--text-muted);
+}
+
+.wesight-weibo-image-card-actions button:last-child {
+  border-right: 0;
+}
+
+.wesight-weibo-image-card-actions svg {
+  width: 13px;
+}
+
+.wesight-weibo-library {
+  display: grid;
+  gap: 7px;
+  padding-top: 3px;
+}
+
+.wesight-weibo-library > strong {
+  font-size: 11px;
+}
+
+.wesight-weibo-library > span {
+  color: var(--text-muted);
+  font-size: 9px;
+}
+
+button.wesight-weibo-library-item {
+  cursor: pointer;
+  padding: 0;
+}
+
+button.wesight-weibo-library-item:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.wesight-weibo-review-summary .wesight-xhs-review-grid img {
+  aspect-ratio: 1;
+}
+
+.wesight-jike-copy-layout {
+  display: grid;
+  min-height: 0;
+  grid-template-columns: minmax(0, 1fr) minmax(225px, 0.62fr);
+  gap: 0;
+  border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.wesight-jike-copy-canvas {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 12px;
+  padding-right: 16px;
+}
+
+.wesight-jike-copy-heading {
+  display: flex;
+  min-width: 0;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.wesight-jike-copy-heading > div:first-child {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+
+.wesight-jike-copy-heading > div:first-child strong {
+  font-size: 14px;
+  font-weight: 740;
+}
+
+.wesight-jike-copy-heading > div:first-child span {
+  color: var(--text-muted);
+  font-size: 10px;
+}
+
+.wesight-jike-engine-control {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 7px;
+  padding-top: 1px;
+}
+
+.wesight-jike-engine-control strong {
+  font-size: 10px;
+  font-weight: 650;
+}
+
+.wesight-jike-engine-chevron {
+  display: flex;
+  margin-left: -3px;
+  color: var(--text-muted);
+}
+
+.wesight-jike-engine-chevron svg {
+  width: 11px;
+  height: 11px;
+}
+
+.wesight-jike-engine-control button {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--text-muted);
+  font-size: 9px;
+  font-weight: 650;
+}
+
+.wesight-jike-structure button {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  color: #d4613c;
+  font-size: 9px;
+  font-weight: 650;
+}
+
+.wesight-jike-structure {
+  display: grid;
+  min-height: 38px;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 0 11px;
+  border-radius: 8px;
+  background: var(--background-secondary);
+}
+
+.wesight-jike-structure strong {
+  color: var(--text-muted);
+  font-size: 9px;
+}
+
+.wesight-jike-structure > span {
+  overflow: hidden;
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wesight-jike-body-field textarea {
+  height: 250px;
+  min-height: 210px;
+  resize: vertical;
+  font-size: 12px;
+  line-height: 1.72;
+}
+
+.wesight-jike-generation-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 8px;
+}
+
+.wesight-jike-tone-list {
+  display: inline-flex;
+  min-width: 0;
+  align-items: center;
+  gap: 4px;
+}
+
+.wesight-jike-tone-list button {
+  min-width: 0;
+  min-height: 32px;
+  padding: 0 10px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 7px;
+  background: var(--background-primary);
+  box-shadow: none;
+  color: var(--text-normal);
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+.wesight-jike-tone-list button.is-selected {
+  border-color: rgba(217, 119, 87, 0.55);
+  background: rgba(217, 119, 87, 0.07);
+  color: #c65f3f;
+}
+
+.wesight-jike-prompt-settings {
+  position: relative;
+}
+
+.wesight-jike-prompt-settings summary {
+  min-height: 32px;
+  padding: 7px 10px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 7px;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 10px;
+  list-style-position: inside;
+  white-space: nowrap;
+}
+
+.wesight-jike-prompt-settings[open] textarea {
+  position: absolute;
+  z-index: 4;
+  top: calc(100% + 6px);
+  right: 0;
+  width: 260px;
+  min-height: 86px;
+  padding: 8px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 8px;
+  background: var(--background-primary);
+  box-shadow: 0 12px 30px rgba(35, 28, 24, 0.14);
+  resize: vertical;
+}
+
+button.wesight-jike-generate-button {
+  min-height: 32px;
+}
+
+.wesight-jike-destination {
+  display: grid;
+  gap: 8px;
+  padding-top: 10px;
+  border-top: 1px solid var(--background-modifier-border);
+}
+
+.wesight-jike-destination-row {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: 62px minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+}
+
+.wesight-jike-destination-row > strong,
+.wesight-jike-topic-label strong {
+  font-size: 10px;
+}
+
+.wesight-jike-topic-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+}
+
+.wesight-jike-topic-label span {
+  color: var(--text-muted);
+  font-size: 8px;
+}
+
+.wesight-jike-circle-control {
+  display: inline-flex;
+  width: fit-content;
+  min-width: 150px;
+  min-height: 32px;
+  align-items: center;
+  gap: 6px;
+  padding: 0 9px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 8px;
+  background: var(--background-primary);
+}
+
+.wesight-jike-circle-control > span {
+  display: flex;
+  color: #f1b800;
+}
+
+.wesight-jike-circle-control svg {
+  width: 15px;
+  height: 15px;
+}
+
+.wesight-jike-circle-control input {
+  width: 120px;
+  min-height: 26px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  font-size: 10px;
+}
+
+.wesight-jike-topic-list {
+  min-width: 0;
+}
+
+.wesight-jike-topic-list .wesight-xhs-tag-input {
+  min-width: 112px;
+}
+
+.wesight-jike-topic-list .wesight-xhs-tag {
+  border-color: transparent;
+  background: var(--background-secondary);
+  color: var(--text-normal);
+}
+
+.wesight-jike-topic-list .wesight-xhs-tag button {
+  color: var(--text-muted);
+}
+
+.wesight-jike-preview-rail {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 10px;
+  padding-left: 16px;
+  border-left: 1px solid var(--background-modifier-border);
+}
+
+.wesight-jike-preview-rail > strong {
+  font-size: 10px;
+}
+
+.wesight-jike-feed-card {
+  position: sticky;
+  top: 0;
+  display: grid;
+  min-width: 0;
+  gap: 9px;
+  padding: 12px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 10px;
+  background: var(--background-primary);
+}
+
+.wesight-jike-feed-account {
+  display: flex;
+  min-width: 0;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.wesight-jike-feed-avatar {
+  width: 31px;
+  height: 31px;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: #1f2329;
+  object-fit: cover;
+}
+
+.wesight-jike-feed-account > div {
+  display: grid;
+  min-width: 0;
+  gap: 1px;
+}
+
+.wesight-jike-feed-account strong {
+  font-size: 10px;
+}
+
+.wesight-jike-feed-account span {
+  overflow: hidden;
+  color: var(--text-muted);
+  font-size: 8px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wesight-jike-feed-account span.wesight-jike-circle-preview {
+  color: #a87f00;
+  font-weight: 650;
+}
+
+.wesight-jike-feed-body {
+  display: -webkit-box;
+  overflow: hidden;
+  margin: 0;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 15;
+  font-size: 10px;
+  line-height: 1.68;
+  white-space: pre-wrap;
+}
+
+.wesight-jike-feed-images {
+  display: grid;
+  overflow: hidden;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 3px;
+  border-radius: 7px;
+}
+
+.wesight-jike-feed-images:empty {
+  display: none;
+}
+
+.wesight-jike-feed-images img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+}
+
+.wesight-jike-feed-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  padding-top: 7px;
+  border-top: 1px solid var(--background-modifier-border);
+  color: var(--text-muted);
+  font-size: 8px;
+  text-align: center;
+}
+
+.wesight-jike-feed-metrics > span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+}
+
+.wesight-jike-feed-metrics svg {
+  width: 11px;
+  height: 11px;
+}
+
+.wesight-jike-section-footer {
+  display: flex;
+  align-items: stretch;
+  padding-top: 0;
+}
+
+.wesight-jike-section-footer > button {
+  width: 100%;
+}
+
+.wesight-jike-review-circle {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 8px;
+  border-radius: 999px;
+  background: rgba(245, 196, 0, 0.12);
+  color: #946f00;
+  font-size: 9px;
+  font-weight: 650;
+}
+
+.wesight-jike-review-circle svg {
+  width: 12px;
+  height: 12px;
+}
+
+.wesight-xhs-publish-preflight {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr);
+  gap: 9px;
+  padding: 10px 12px;
+  border: 1px solid rgba(245, 158, 11, 0.28);
+  border-radius: 10px;
+  background: rgba(245, 158, 11, 0.08);
+  color: #a45d08;
+}
+
+.wesight-xhs-publish-preflight > span {
+  display: flex;
+  align-items: flex-start;
+  padding-top: 1px;
+}
+
+.wesight-xhs-publish-preflight > span svg {
+  width: 17px;
+}
+
+.wesight-xhs-publish-preflight > div {
+  display: grid;
+  gap: 3px;
+}
+
+.wesight-xhs-publish-preflight strong,
+.wesight-xhs-publish-preflight div span {
+  font-size: 10px;
+}
+
+.wesight-xhs-publish-card {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid rgba(217, 119, 87, 0.28);
+  border-radius: 11px;
+  background: rgba(217, 119, 87, 0.055);
+}
+
+.wesight-xhs-publish-card.is-loading {
+  grid-template-columns: 22px minmax(0, 1fr);
+  align-items: center;
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+.wesight-xhs-publish-card.is-loading > span:first-child {
+  display: flex;
+  animation: wesight-spin 0.9s linear infinite;
+}
+
+.wesight-xhs-publish-card-heading {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  align-items: center;
+  gap: 9px;
+}
+
+.wesight-xhs-publish-card-heading > span {
+  display: flex;
+  width: 34px;
+  height: 34px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9px;
+  background: rgba(217, 119, 87, 0.14);
+  color: #d97757;
+}
+
+.wesight-xhs-publish-card-heading > div {
+  display: grid;
+  gap: 2px;
+}
+
+.wesight-xhs-publish-card-heading strong {
+  font-size: 11px;
+}
+
+.wesight-xhs-publish-card-heading div span {
+  color: var(--text-muted);
+  font-size: 9px;
+}
+
+.wesight-xhs-publish-install {
+  margin-top: 0;
+}
+
+.wesight-xhs-publish-connection {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 11px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 10px;
+  background: var(--background-secondary);
+}
+
+.wesight-xhs-publish-connection > span {
+  display: flex;
+  width: 30px;
+  height: 30px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: rgba(217, 119, 87, 0.12);
+  color: #d97757;
+}
+
+.wesight-xhs-publish-connection.is-connected > span {
+  background: rgba(46, 167, 101, 0.11);
+  color: #278151;
+}
+
+.wesight-xhs-publish-connection.is-outdated {
+  border-color: rgba(198, 74, 54, 0.32);
+  background: rgba(198, 74, 54, 0.055);
+}
+
+.wesight-xhs-publish-connection.is-outdated > span {
+  background: rgba(198, 74, 54, 0.11);
+  color: #b3412f;
+}
+
+.wesight-xhs-publish-connection > div {
+  display: grid;
+  gap: 2px;
+}
+
+.wesight-xhs-publish-connection strong {
+  font-size: 10px;
+}
+
+.wesight-xhs-publish-connection div span {
+  color: var(--text-muted);
+  font-size: 9px;
+}
+
+.wesight-xhs-publish-task {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid rgba(217, 119, 87, 0.28);
+  border-radius: 11px;
+  background: rgba(217, 119, 87, 0.055);
+}
+
+.wesight-xhs-publish-task > span {
+  display: flex;
+  width: 32px;
+  height: 32px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9px;
+  background: rgba(217, 119, 87, 0.12);
+  color: #d97757;
+}
+
+.wesight-xhs-publish-task.is-opening > span,
+.wesight-xhs-publish-task.is-filling > span,
+.wesight-xhs-publish-task.is-queued > span {
+  animation: wesight-spin 0.9s linear infinite;
+}
+
+.wesight-xhs-publish-task.is-ready > span {
+  background: rgba(46, 167, 101, 0.11);
+  color: #278151;
+}
+
+.wesight-xhs-publish-task.is-failed > span,
+.wesight-xhs-publish-task.is-login_required > span {
+  background: rgba(220, 75, 60, 0.11);
+  color: #c34f3e;
+}
+
+.wesight-xhs-publish-task > div:nth-child(2) {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+
+.wesight-xhs-publish-task strong {
+  font-size: 11px;
+}
+
+.wesight-xhs-publish-task div span {
+  overflow: hidden;
+  color: var(--text-muted);
+  font-size: 9px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wesight-xhs-publish-task > div:last-child {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.wesight-xhs-publish-task button {
+  min-height: 27px;
+  padding: 3px 8px;
+  font-size: 9px;
+}
+
+@container (max-width: 560px) {
+  .wesight-xhs-header {
+    min-height: 84px;
+    padding-block: 10px;
+  }
+
+  .wesight-xhs-brand {
+    gap: 11px;
+  }
+
+  .wesight-xhs-brand img {
+    width: 54px;
+    height: 54px;
+  }
+
+  .wesight-xhs-brand-copy {
+    gap: 6px;
+  }
+
+  .wesight-xhs-brand-copy > strong {
+    font-size: 18px;
+  }
+
+  .wesight-xhs-recommendation {
+    gap: 6px;
+  }
+
+  .wesight-xhs-recommendation-label > span:last-child {
+    display: none;
+  }
+
+  .wesight-xhs-studio {
+    grid-template-columns: minmax(220px, 1fr) minmax(164px, 0.74fr);
+  }
+
+  .wesight-xhs-image-settings {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding-top: 12px;
+    padding-left: 0;
+    border-top: 1px solid var(--background-modifier-border);
+    border-left: 0;
+  }
+
+  .wesight-xhs-image-settings > .wesight-xhs-section-heading {
+    grid-column: 1 / -1;
+  }
+
+  .wesight-xhs-content-generate,
+  .wesight-xhs-content-saved,
+  .wesight-xhs-current-page,
+  .wesight-xhs-content-regenerate,
+  .wesight-xhs-setting-engine {
+    grid-column: 1 / -1;
+  }
+
+  .wesight-weibo-copy-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .wesight-weibo-preview-panel {
+    padding-top: 14px;
+    padding-left: 0;
+    border-top: 1px solid var(--background-modifier-border);
+    border-left: 0;
+  }
+
+  .wesight-jike-copy-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .wesight-jike-copy-canvas {
+    padding-right: 0;
+  }
+
+  .wesight-jike-preview-rail {
+    padding-top: 14px;
+    padding-left: 0;
+    border-top: 1px solid var(--background-modifier-border);
+    border-left: 0;
+  }
+
+  button.wesight-quick-image {
+    flex-basis: clamp(104px, 29%, 132px);
+  }
+
+  .wesight-quick-copy-mode {
+    grid-template-columns: auto minmax(188px, 1fr);
+  }
+
+  .wesight-quick-copy-mode-note {
+    grid-column: 1 / -1;
+  }
+
+  .wesight-quick-footer {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@container (max-width: 460px) {
+  .wesight-xhs-header {
+    align-items: flex-start;
+  }
+
+  .wesight-xhs-brand img {
+    width: 46px;
+    height: 46px;
+  }
+
+  .wesight-xhs-brand-copy > strong {
+    font-size: 15px;
+  }
+
+  .wesight-xhs-recommendation-label > span:last-child,
+  .wesight-xhs-recommendation-basis {
+    display: none;
+  }
+
+  .wesight-xhs-category-grid {
+    display: flex;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  button.wesight-xhs-category {
+    width: 88px;
+    flex: 0 0 88px;
+  }
+
+  .wesight-xhs-copy-layout,
+  .wesight-xhs-review-summary,
+  .wesight-xhs-studio {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .wesight-xhs-copy-controls,
+  .wesight-xhs-style-rail,
+  .wesight-xhs-image-settings,
+  .wesight-xhs-review-copy {
+    padding-top: 12px;
+    padding-right: 0;
+    padding-left: 0;
+    border-top: 1px solid var(--background-modifier-border);
+    border-right: 0;
+    border-left: 0;
+  }
+
+  .wesight-xhs-style-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .wesight-xhs-image-settings {
+    display: grid;
+    grid-column: auto;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .wesight-xhs-content-generate,
+  .wesight-xhs-content-saved,
+  .wesight-xhs-current-page,
+  .wesight-xhs-content-regenerate,
+  .wesight-xhs-setting-engine {
+    grid-column: auto;
+  }
+
+  .wesight-xhs-live-preview {
+    width: min(360px, 100%);
+  }
+
+  .wesight-xhs-review-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .wesight-xhs-review-footer,
+  .wesight-xhs-publish-connection,
+  .wesight-xhs-publish-task {
+    align-items: stretch;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .wesight-xhs-review-footer {
+    flex-direction: column;
+  }
+
+  .wesight-xhs-review-footer button,
+  .wesight-xhs-publish-card > button {
+    width: 100%;
+  }
+
+  .wesight-xhs-header-actions {
+    width: min(100%, 360px);
+    overflow-x: auto;
+    padding-bottom: 2px;
+  }
+
+  .wesight-weibo-tone-list,
+  .wesight-weibo-selected-grid,
+  .wesight-weibo-library-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .wesight-jike-copy-heading,
+  .wesight-jike-generation-row {
+    align-items: stretch;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .wesight-jike-copy-heading {
+    flex-direction: column;
+  }
+
+  .wesight-jike-tone-list {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .wesight-jike-destination-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .wesight-weibo-section-footer,
+  .wesight-xhs-copy-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .wesight-weibo-image-actions {
+    flex-wrap: wrap;
+  }
+
+  .wesight-xhs-publish-task > div:last-child {
+    justify-content: flex-start;
+  }
+
+  .wesight-quick-heading,
+  .wesight-quick-platform-bar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  button.wesight-quick-engine {
+    align-self: flex-start;
+  }
+
+  .wesight-quick-section-heading {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .wesight-quick-section-heading > div:first-child {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .wesight-quick-recommendation {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  button.wesight-quick-clear {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+
+  button.wesight-quick-image {
+    flex-basis: clamp(104px, 42%, 132px);
+  }
+
+  .wesight-quick-copy-mode {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .wesight-quick-copy-mode-note {
+    grid-column: auto;
+    white-space: normal;
+  }
+
+  .wesight-quick-copy-tabs {
+    overflow-x: auto;
+  }
+
+  .wesight-quick-copy-tabs > button {
+    flex: 0 0 96px;
+  }
+
+  .wesight-quick-destinations {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .wesight-quick-supplement {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .wesight-quick-supplement-note {
+    grid-column: auto;
+  }
+}
+
+.wesight-multi-preflight {
+  display: grid;
+  grid-template-columns: 22px 1fr;
+  gap: 8px;
+  padding: 9px 10px;
+  border-radius: 8px;
+  background: rgba(245, 158, 11, 0.11);
+  color: #a85e09;
+}
+
+.wesight-multi-preflight > span svg {
+  width: 16px;
+}
+
+.wesight-multi-preflight > div {
+  display: grid;
+  gap: 2px;
+}
+
+.wesight-multi-preflight strong {
+  font-size: 10px;
+}
+
+.wesight-multi-preflight div span {
+  font-size: 9px;
+  line-height: 1.4;
+}
+
+button.wesight-share-primary-button.is-multi {
+  border-color: #d97757;
+  background: #d97757;
+}
+
+.wesight-multi-task-list {
+  display: grid;
+  max-height: 274px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 9px;
+}
+
+.wesight-multi-task-row {
+  display: grid;
+  grid-template-columns: 24px 1fr auto;
+  min-height: 54px;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.wesight-multi-task-row:last-child {
+  border-bottom: 0;
+}
+
+.wesight-multi-task-icon {
+  color: var(--text-muted);
+}
+
+.wesight-multi-task-row.is-ready .wesight-multi-task-icon {
+  color: #2a8a59;
+}
+
+.wesight-multi-task-row.is-failed .wesight-multi-task-icon,
+.wesight-multi-task-row.is-login_required .wesight-multi-task-icon {
+  color: #c16a23;
+}
+
+.wesight-multi-task-icon svg {
+  width: 17px;
+}
+
+.wesight-multi-task-copy {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+
+.wesight-multi-task-copy strong {
+  font-size: 11px;
+}
+
+.wesight-multi-task-copy span {
+  overflow: hidden;
+  color: var(--text-muted);
+  font-size: 9px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wesight-multi-task-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.wesight-multi-task-actions button {
+  min-height: 26px;
+  padding: 0 7px;
+  border: 1px solid rgba(217, 119, 87, 0.35);
+  border-radius: 6px;
+  background: rgba(217, 119, 87, 0.08);
+  box-shadow: none;
+  color: #bd5f3f;
+  font-size: 9px;
+}
+
+button.wesight-multi-new-task {
+  width: 100%;
 }
 
 button.wesight-share-icon-button {
