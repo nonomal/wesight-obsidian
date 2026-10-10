@@ -14,7 +14,7 @@ import { AgentAdapter } from './adapter';
 import { mergeEnvironment } from '../utils/env';
 import { CodexAppServerRuntime } from './codexRuntime';
 import { isTokenDanceProfile, type TokenDanceService } from '../tokendance/service';
-import { isOpenLuxProfile, type OpenLuxService } from '../openlux/service';
+import { isCiyuanProfile, type CiyuanService } from '../ciyuan/service';
 import type { MemberAiService } from '../memberAi/service';
 
 export type RuntimeEventListener = (event: RuntimeTurnEvent) => void;
@@ -31,7 +31,7 @@ export class RuntimeManager {
     private getSettings: () => WeSightObsidianSettings,
     private readonly tokenDance?: TokenDanceService,
     private readonly memberAi?: MemberAiService,
-    private readonly openLux?: OpenLuxService,
+    private readonly ciyuan?: CiyuanService,
   ) {}
 
   resolveStatus(request: ChatTurnRequest): AgentStatus {
@@ -196,14 +196,14 @@ export class RuntimeManager {
         runtimeProfile=await this.memberAi.runtimeProfile(request.model||settings.memberAiModel);
       }catch(error){deliver({type:'error',message:error instanceof Error?error.message:'会员模型不可用'});deliver({type:'done'});return;}
       if(request.signal?.aborted){deliver({type:'done'});return;}
-    } else if (isOpenLuxProfile(profile)) {
+    } else if (isCiyuanProfile(profile)) {
       try {
-        if (!this.openLux || request.agentId !== 'claude') throw new Error('OpenLux 当前仅支持 Claude Code。');
-        const lease = await this.openLux.acquire(profile!, request.signal);
+        if (!this.ciyuan || request.agentId !== 'claude') throw new Error('词元API 当前仅支持 Claude Code。');
+        const lease = await this.ciyuan.acquire(profile!, request.signal);
         runtimeProfile = lease.profile;
         releaseProvider = lease.release;
       } catch (error) {
-        deliver({ type: 'error', message: error instanceof Error ? error.message : 'OpenLux 连接失败。', providerProfileId: profile?.id });
+        deliver({ type: 'error', message: error instanceof Error ? error.message : '词元API 连接失败。', providerProfileId: profile?.id });
         deliver({ type: 'done' });
         return;
       }
@@ -268,7 +268,7 @@ export class RuntimeManager {
 
   async shutdown(): Promise<void> {
     this.cancel();
-    this.openLux?.close();
+    this.ciyuan?.close();
     await this.codexRuntime.shutdown();
   }
 

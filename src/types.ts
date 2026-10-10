@@ -1,4 +1,4 @@
-import type { CatalogModel } from './openlux/catalog';
+import type { CatalogModel } from './ciyuan/catalog';
 import type { WeChatThemeId } from './wechat/themes';
 import type { MultiPlatformId, MultiPublishPairing } from './multiPublish/types';
 

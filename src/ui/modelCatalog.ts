@@ -1,5 +1,5 @@
 import { setIcon } from 'obsidian';
-import { groupModelsByVendor, type CatalogModel } from '../openlux/catalog';
+import { groupModelsByVendor, type CatalogModel } from '../ciyuan/catalog';
 import { MODEL_VENDOR_LABELS } from '../providers/modelVendors';
 import { renderModelIcon } from './modelIcons';
 

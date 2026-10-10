@@ -70,9 +70,9 @@ export function groupModelsByVendor<T extends CatalogModel>(models: readonly T[]
 }
 
 /** Some relays label every row as owned_by=openai. Known families take precedence. */
-export function parseOpenLuxCatalog(payload: unknown): CatalogModel[] {
+export function parseCiyuanCatalog(payload: unknown): CatalogModel[] {
   if (!payload || typeof payload !== 'object' || !('data' in payload) || !Array.isArray(payload.data)) {
-    throw new Error('OpenLux 模型目录格式无效，请刷新重试。');
+    throw new Error('词元API 模型目录格式无效，请刷新重试。');
   }
   const models = new Map<string, CatalogModel>();
   const rows: unknown[] = payload.data;

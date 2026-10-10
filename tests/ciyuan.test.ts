@@ -1,15 +1,16 @@
 import { Readable } from 'node:stream';
 import type { IncomingMessage } from 'node:http';
-import { OpenLuxService } from '../src/openlux/service';
-import { OPEN_LUX } from '../src/openlux/constants';
-import { parseOpenLuxCatalog, getModelVendor, groupModelsByVendor, mergeCatalogModels } from '../src/openlux/catalog';
+import { CiyuanService } from '../src/ciyuan/service';
+import { CIYUAN_API } from '../src/ciyuan/constants';
+import { isCiyuanProfile } from '../src/ciyuan/profile';
+import { parseCiyuanCatalog, getModelVendor, groupModelsByVendor, mergeCatalogModels } from '../src/ciyuan/catalog';
 import { providerRequest } from '../src/providers/transport';
 import { prepareProviderProjection } from '../src/runtime/providerProjection';
 import type { ProviderProfile } from '../src/types';
 
 function profile(model = 'google/gemini-2.5-pro', key = 'upstream-secret'): ProviderProfile {
-  return { id: key, providerKey: 'openlux', agentId: 'claude', name: 'OpenLux', apiKey: key,
-    baseUrl: OPEN_LUX.baseUrl, model, defaultModel: model, models: [model], wireApi: 'chat',
+  return { id: key, providerKey: 'ciyuan', agentId: 'claude', name: '词元API', apiKey: key,
+    baseUrl: CIYUAN_API.baseUrl, model, defaultModel: model, models: [model], wireApi: 'chat',
     isDefault: true, createdAt: 1, updatedAt: 1 };
 }
 
@@ -20,12 +21,12 @@ function reply(value: unknown, status = 200): IncomingMessage {
   return response;
 }
 
-const services: OpenLuxService[] = [];
+const services: CiyuanService[] = [];
 afterEach(() => { for (const service of services.splice(0)) service.close(); });
 const completion = { choices: [{ message: { content: 'OK' }, finish_reason: 'stop' }], usage: { prompt_tokens: 3, completion_tokens: 1 } };
 function setup(upstream: typeof providerRequest = async () => reply(completion)) {
   const request = vi.fn<typeof providerRequest>(async (url, options) => url.startsWith('http://127.0.0.1') ? providerRequest(url, options) : upstream(url, options));
-  const service = new OpenLuxService(request);
+  const service = new CiyuanService(request);
   services.push(service);
   return { service, request };
 }
@@ -36,7 +37,7 @@ async function post(runtime: ProviderProfile, body: unknown, path = '/v1/message
 const message = (model: string, stream = false) => ({ model, stream, max_tokens: 10, messages: [{ role: 'user', content: 'Hi' }] });
 
 test('catalog preserves exact IDs, deduplicates, filters media and classifies misleading owners', () => {
-  const rows = parseOpenLuxCatalog({ data: [
+  const rows = parseCiyuanCatalog({ data: [
     { id: 'google/gemini-2.5-pro', name: 'Gemini Pro', owned_by: 'openai', supports_image: true },
     { id: 'claude-sonnet-4', owned_by: 'openai' }, { id: 'gpt-4o' }, { id: 'gpt-4o' },
     { id: 'custom-chat', owned_by: 'mistralai' }, { id: 'unknown-chat' }, { id: '' }, null,
@@ -49,8 +50,8 @@ test('catalog preserves exact IDs, deduplicates, filters media and classifies mi
   expect(groupModelsByVendor(rows).map(group => group.vendor)).toEqual(['openai', 'google', 'anthropic', 'mistral', 'other']);
   expect(groupModelsByVendor(rows, 'GEMINI')[0].models).toEqual([rows[0]]);
   expect(groupModelsByVendor(rows, 'no match')).toEqual([]);
-  expect(() => parseOpenLuxCatalog({ models: [] })).toThrow('目录格式无效');
-  expect(parseOpenLuxCatalog({ data: [] })).toEqual([]);
+  expect(() => parseCiyuanCatalog({ models: [] })).toThrow('目录格式无效');
+  expect(parseCiyuanCatalog({ data: [] })).toEqual([]);
 });
 
 test('refresh keeps custom names and manually added models', () => {
@@ -65,11 +66,34 @@ test('refresh keeps custom names and manually added models', () => {
 
 test('catalog requests use Bearer auth and normalize root and v1 URLs', async () => {
   const { service, request } = setup(async () => reply({ data: [{ id: 'gpt-4o' }] }));
-  for (const baseUrl of ['https://api.openlux.ai', `${OPEN_LUX.baseUrl}/`]) {
+  for (const baseUrl of ['https://ciyuan.today', `${CIYUAN_API.baseUrl}/`, 'https://api.openlux.ai/v1', 'https://api.openlux.ai']) {
     expect(await service.fetchCatalog({ baseUrl, apiKey: 'catalog-key' })).toHaveLength(1);
-    expect(request).toHaveBeenLastCalledWith(`${OPEN_LUX.baseUrl}/models`, expect.objectContaining({ headers: { Authorization: 'Bearer catalog-key' } }));
+    expect(request).toHaveBeenLastCalledWith(`${CIYUAN_API.baseUrl}/models`, expect.objectContaining({ headers: { Authorization: 'Bearer catalog-key' } }));
   }
-  await expect(service.fetchCatalog({ baseUrl: OPEN_LUX.baseUrl, apiKey: '' })).rejects.toThrow('API Key');
+  await expect(service.fetchCatalog({ baseUrl: CIYUAN_API.baseUrl, apiKey: '' })).rejects.toThrow('API Key');
+});
+
+test('recognizes old and new provider identities without overriding an explicit unrelated key', () => {
+  expect(isCiyuanProfile({ providerKey: 'openlux', name: 'Legacy label' })).toBe(true);
+  expect(isCiyuanProfile({ name: 'OpenLux' })).toBe(true);
+  expect(isCiyuanProfile({ name: CIYUAN_API.name })).toBe(true);
+  expect(isCiyuanProfile({ providerKey: CIYUAN_API.key, name: CIYUAN_API.name })).toBe(true);
+  expect(isCiyuanProfile({ providerKey: 'custom', name: 'OpenLux' })).toBe(false);
+});
+
+test('legacy runtime profiles send the original key and full model ID to the new endpoint', async () => {
+  const { service, request } = setup();
+  const legacy = { ...profile(), name: 'OpenLux', providerKey: 'openlux', baseUrl: 'https://api.openlux.ai/v1' };
+  const lease = await service.acquire(legacy);
+  expect(lease.profile).toMatchObject({ id: legacy.id, providerKey: CIYUAN_API.key, name: CIYUAN_API.name });
+  const response = await post(lease.profile, message(legacy.defaultModel));
+  expect(response.status).toBe(200);
+  const [url, options] = request.mock.calls.find(([url]) => !url.startsWith('http://127.0.0.1'))!;
+  expect(url).toBe(`${CIYUAN_API.baseUrl}/chat/completions`);
+  expect(options?.headers).toMatchObject({ Authorization: `Bearer ${legacy.apiKey}` });
+  expect(JSON.parse(String(options?.body))).toMatchObject({ model: legacy.defaultModel });
+  expect(legacy).toMatchObject({ providerKey: 'openlux', name: 'OpenLux', baseUrl: 'https://api.openlux.ai/v1', apiKey: 'upstream-secret' });
+  lease.release();
 });
 
 test('Claude receives only loopback credentials; full IDs, images and tools reach the configured relay', async () => {
@@ -90,7 +114,7 @@ test('Claude receives only loopback credentials; full IDs, images and tools reac
   expect(result.status).toBe(200);
   expect(await result.json()).toMatchObject({ type: 'message', content: [{ type: 'text', text: 'OK' }] });
   const [url, init] = request.mock.calls[0];
-  expect(url).toBe(`${OPEN_LUX.baseUrl}/chat/completions`);
+  expect(url).toBe(`${CIYUAN_API.baseUrl}/chat/completions`);
   expect(init?.headers?.Authorization).toBe('Bearer upstream-secret');
   const body = JSON.parse(init!.body!) as Record<string, unknown>;
   expect(body.model).toBe(original.model);
@@ -131,7 +155,7 @@ test.each([401, 403, 402, 429, 500])('upstream %s preserves status and hides pri
   const result = await post(lease.profile, message(lease.profile.model));
   expect(result.status).toBe(status);
   const text = await result.text();
-  expect(text).toContain('OpenLux');
+  expect(text).toContain('词元API');
   expect(text).not.toContain('upstream-secret');
   expect(text).not.toContain('private');
 });
@@ -186,9 +210,9 @@ test('abort invalidates one lease and aborts its outstanding upstream request', 
 test('connection test follows the proxy and validates a returned message', async () => {
   const { service, request } = setup();
   await service.test(profile());
-  expect(request.mock.calls.map(([url]) => url)).toEqual([expect.stringContaining('/v1/messages'), `${OPEN_LUX.baseUrl}/chat/completions`]);
+  expect(request.mock.calls.map(([url]) => url)).toEqual([expect.stringContaining('/v1/messages'), `${CIYUAN_API.baseUrl}/chat/completions`]);
   const bad = setup(async () => reply({ choices: [] }));
-  await expect(bad.service.test(profile())).rejects.toThrow('OpenLux');
+  await expect(bad.service.test(profile())).rejects.toThrow('词元API');
   await expect(service.acquire({ ...profile(), agentId: 'opencode' })).rejects.toThrow('仅支持 Claude Code');
   service.close();
   await expect(service.acquire(profile())).rejects.toThrow('已关闭');
@@ -201,5 +225,5 @@ test.each([{ choices: [] }, { choices: [{}] }, { choices: [{ message: { content:
   expect(response.status).toBe(502);
   const body: unknown = await response.json();
   expect(body).toMatchObject({ type: 'error' });
-  expect(JSON.stringify(body)).toContain('OpenLux');
+  expect(JSON.stringify(body)).toContain('词元API');
 });

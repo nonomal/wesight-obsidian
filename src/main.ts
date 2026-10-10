@@ -1,4 +1,4 @@
-import { OpenLuxService } from './openlux/service';
+import { CiyuanService } from './ciyuan/service';
 import {
   apiVersion,
   type App,
@@ -75,7 +75,7 @@ export default class WeSightPlugin extends Plugin {
   settings!: WeSightObsidianSettings;
   providerStore!: ProviderStore;
   tokenDance!: TokenDanceService;
-  openLux!: OpenLuxService;
+  ciyuan!: CiyuanService;
   memberAi!: MemberAiService;
   claudeInstaller!: ClaudeInstaller;
   vaultStore!: VaultStore;
@@ -120,7 +120,7 @@ export default class WeSightPlugin extends Plugin {
       secrets: this.app.secretStorage,
       openExternal: url => { window.open(url, '_blank', 'noopener,noreferrer'); },
     });
-    this.openLux = new OpenLuxService();
+    this.ciyuan = new CiyuanService();
     this.vaultStore = new VaultStore(this.app.vault.adapter);
     this.cloudAuth = new CloudAuthService(this.app);
     this.memberAi = new MemberAiService({auth:this.cloudAuth,confirmDisclosure:async userId=>{
@@ -129,7 +129,7 @@ export default class WeSightPlugin extends Plugin {
       this.settings.memberAiConsentUserId=userId;await this.saveData(this.settings);return true;
     }});
     this.claudeInstaller = new ClaudeInstaller(()=>this.settings,()=>this.saveSettings());
-    this.runtimeManager = new RuntimeManager(this.providerStore, () => this.settings, this.tokenDance, this.memberAi, this.openLux);
+    this.runtimeManager = new RuntimeManager(this.providerStore, () => this.settings, this.tokenDance, this.memberAi, this.ciyuan);
     this.knowledgeBrainEntitlement = new KnowledgeBrainEntitlementService(
       this.cloudAuth,
       this.app.secretStorage,
@@ -419,7 +419,7 @@ export default class WeSightPlugin extends Plugin {
 
     this.settingTab = new WeSightSettingTab(this.app, this, {
       tokenDance: this.tokenDance,
-      openLux: this.openLux,
+      ciyuan: this.ciyuan,
       memberAi: this.memberAi,
       claudeInstaller: this.claudeInstaller,
       getSettings: () => this.settings,
@@ -439,7 +439,7 @@ export default class WeSightPlugin extends Plugin {
     this.memberAi?.close();
     this.claudeInstaller?.cancel();
     this.tokenDance?.close();
-    this.openLux?.close();
+    this.ciyuan?.close();
     this.sharePopover?.close();
     void this.multiPublishBridge?.stop();
     void this.runtimeManager?.shutdown();

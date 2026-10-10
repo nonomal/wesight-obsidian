@@ -7,26 +7,22 @@ import type { ProviderProfile } from '../types';
 import { anthropicToOpenAI, openAIToAnthropic, formatSSEEvent } from '../providers/format';
 import { pipeChatAsMessages } from '../providers/stream';
 import { providerRequest, readProviderJson } from '../providers/transport';
-import { parseOpenLuxCatalog, type CatalogModel } from './catalog';
-import { OPEN_LUX } from './constants';
+import { parseCiyuanCatalog, type CatalogModel } from './catalog';
+import { normalizeCiyuanBaseUrl, normalizeCiyuanProfile } from './profile';
 
-export function isOpenLuxProfile(profile: ProviderProfile | null): boolean {
-  if (!profile) return false;
-  if (profile.providerKey) return profile.providerKey === OPEN_LUX.key;
-  return profile.name.trim().toLowerCase() === OPEN_LUX.key;
-}
+export { isCiyuanProfile } from './profile';
 
-export function openLuxError(status: number): string {
-  if (status === 401 || status === 403) return `OpenLux 鉴权失败（${status}），请检查 API Key 和模型权限。`;
-  if (status === 402) return 'OpenLux 余额或密钥额度不足，请前往官网检查。';
-  if (status === 429) return 'OpenLux 请求受限（429），请稍后重试。';
-  return `OpenLux 请求失败（${status}），请检查模型、服务状态后重试。`;
+export function ciyuanError(status: number): string {
+  if (status === 401 || status === 403) return `词元API 鉴权失败（${status}），请检查 API Key 和模型权限。`;
+  if (status === 402) return '词元API 余额或密钥额度不足，请前往官网检查。';
+  if (status === 429) return '词元API 请求受限（429），请稍后重试。';
+  return `词元API 请求失败（${status}），请检查模型、服务状态后重试。`;
 }
 
 function baseUrl(value: string): string {
-  const url = new URL(value.trim() || OPEN_LUX.baseUrl);
+  const url = new URL(normalizeCiyuanBaseUrl(value));
   if (!['https:', 'http:'].includes(url.protocol) || url.username || url.password || url.search || url.hash) {
-    throw new Error('OpenLux API Base URL 无效。');
+    throw new Error('词元API 请求地址无效。');
   }
   return url.toString().replace(/\/+$/, '');
 }
@@ -42,13 +38,13 @@ interface Session {
   release: () => void;
 }
 
-export interface OpenLuxRuntimeLease {
+export interface CiyuanRuntimeLease {
   profile: ProviderProfile;
   release: () => void;
 }
 
 /** Each local credential owns a snapshot, so concurrent turns cannot change each other's upstream. */
-export class OpenLuxService {
+export class CiyuanService {
   private gateway?: Server;
   private starting?: Promise<void>;
   private gatewayUrl = '';
@@ -59,7 +55,7 @@ export class OpenLuxService {
   constructor(private readonly request: typeof providerRequest = providerRequest) {}
 
   async fetchCatalog(config: { baseUrl: string; apiKey: string }, signal?: AbortSignal): Promise<CatalogModel[]> {
-    if (!config.apiKey.trim()) throw new Error('请先输入 OpenLux API Key。');
+    if (!config.apiKey.trim()) throw new Error('请先输入词元API 的 API Key。');
     const controller = new AbortController();
     const abort = (): void => controller.abort();
     signal?.addEventListener('abort', abort, { once: true });
@@ -74,12 +70,12 @@ export class OpenLuxService {
       });
       if (response.statusCode !== 200) {
         response.destroy();
-        throw new Error(openLuxError(response.statusCode ?? 502));
+        throw new Error(ciyuanError(response.statusCode ?? 502));
       }
-      return parseOpenLuxCatalog(await readProviderJson(response));
+      return parseCiyuanCatalog(await readProviderJson(response));
     } catch (error) {
-      if (error instanceof Error && error.message.startsWith('OpenLux ')) throw error;
-      throw new Error(controller.signal.aborted ? 'OpenLux 模型目录请求已取消或超时。' : '无法获取 OpenLux 模型目录，请检查网络后重试。');
+      if (error instanceof Error && error.message.startsWith('词元API ')) throw error;
+      throw new Error(controller.signal.aborted ? '词元API 模型目录请求已取消或超时。' : '无法获取词元API 模型目录，请检查网络后重试。');
     } finally {
       clearTimeout(timeout);
       signal?.removeEventListener('abort', abort);
@@ -87,14 +83,14 @@ export class OpenLuxService {
     }
   }
 
-  async acquire(profile: ProviderProfile, signal?: AbortSignal): Promise<OpenLuxRuntimeLease> {
-    if (this.closed || signal?.aborted) throw new Error('OpenLux 请求已取消或服务已关闭。');
-    if (profile.agentId !== 'claude') throw new Error('OpenLux 当前仅支持 Claude Code。');
-    if (!profile.apiKey.trim()) throw new Error('请先输入 OpenLux API Key。');
-    if (!(profile.defaultModel || profile.model)) throw new Error('请先选择 OpenLux 默认模型。');
-    const snapshot = { ...profile, baseUrl: baseUrl(profile.baseUrl), models: [...profile.models] };
+  async acquire(profile: ProviderProfile, signal?: AbortSignal): Promise<CiyuanRuntimeLease> {
+    if (this.closed || signal?.aborted) throw new Error('词元API 请求已取消或服务已关闭。');
+    if (profile.agentId !== 'claude') throw new Error('词元API 当前仅支持 Claude Code。');
+    if (!profile.apiKey.trim()) throw new Error('请先输入词元API 的 API Key。');
+    if (!(profile.defaultModel || profile.model)) throw new Error('请先选择词元API 默认模型。');
+    const snapshot = { ...normalizeCiyuanProfile(profile), baseUrl: baseUrl(profile.baseUrl), models: [...profile.models] };
     await this.start();
-    if (this.closed || signal?.aborted) throw new Error('OpenLux 请求已取消或服务已关闭。');
+    if (this.closed || signal?.aborted) throw new Error('词元API 请求已取消或服务已关闭。');
     const token = randomBytes(32).toString('base64url');
     const session: Session = { profile: snapshot, requests: new Set(), release: () => {
       this.sessions.delete(token);
@@ -118,18 +114,18 @@ export class OpenLuxService {
       server.requestTimeout = 120_000;
       server.listen(0, '127.0.0.1');
       await once(server, 'listening');
-      if (this.closed) { server.close(); throw new Error('OpenLux 服务已关闭。'); }
+      if (this.closed) { server.close(); throw new Error('词元API 服务已关闭。'); }
       this.gatewayUrl = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
     })();
     try { await this.starting; }
-    catch { this.gateway?.close(); this.gateway = undefined; throw new Error('无法启动 OpenLux 本机连接。'); }
+    catch { this.gateway?.close(); this.gateway = undefined; throw new Error('无法启动词元API 本机连接。'); }
     finally { this.starting = undefined; }
   }
 
   private async handleRequest(request: IncomingMessage, response: ServerResponse): Promise<void> {
     const authorization = request.headers.authorization ?? request.headers['x-api-key'];
     const session = typeof authorization === 'string' ? this.sessions.get(authorization.replace(/^Bearer\s+/i, '')) : undefined;
-    if (!session) { json(response, 401, { error: { message: '无效的 OpenLux 本机凭据。' } }); return; }
+    if (!session) { json(response, 401, { error: { message: '无效的词元API 本机凭据。' } }); return; }
     const path = new URL(request.url ?? '/', 'http://127.0.0.1').pathname;
     if (request.method !== 'POST' || !['/v1/messages', '/v1/messages/count_tokens'].includes(path)) {
       json(response, 404, { error: { message: '不支持此接口。' } }); return;
@@ -146,7 +142,7 @@ export class OpenLuxService {
       const chunks: Buffer[] = [];
       for await (const chunk of request as AsyncIterable<Buffer>) {
         size += chunk.length;
-        if (size > 32 * 1024 * 1024) { json(response, 413, { error: { message: 'OpenLux 请求过大。' } }); return; }
+        if (size > 32 * 1024 * 1024) { json(response, 413, { error: { message: '词元API 请求过大。' } }); return; }
         chunks.push(Buffer.from(chunk));
       }
       let body: Record<string, unknown>;
@@ -154,11 +150,11 @@ export class OpenLuxService {
         const parsed: unknown = JSON.parse(Buffer.concat(chunks).toString('utf8'));
         if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) throw new Error();
         body = parsed as Record<string, unknown>;
-      } catch { json(response, 400, { error: { message: 'OpenLux 请求格式无效。' } }); return; }
+      } catch { json(response, 400, { error: { message: '词元API 请求格式无效。' } }); return; }
       const profile = session.profile;
       const allowed = new Set([...profile.models, profile.defaultModel || profile.model]);
       if (typeof body.model !== 'string' || !allowed.has(body.model)) {
-        json(response, 400, { error: { message: '请选择已配置的 OpenLux 模型。' } }); return;
+        json(response, 400, { error: { message: '请选择已配置的词元API 模型。' } }); return;
       }
       if (path.endsWith('/count_tokens')) {
         const estimate = Math.ceil(Buffer.byteLength(JSON.stringify({ system: body.system, messages: body.messages, tools: body.tools })) / 2);
@@ -173,11 +169,11 @@ export class OpenLuxService {
       const status = upstream.statusCode ?? 502;
       if (status < 200 || status >= 300) {
         upstream.destroy();
-        json(response, status, { type: 'error', error: { type: 'api_error', message: openLuxError(status) } }); return;
+        json(response, status, { type: 'error', error: { type: 'api_error', message: ciyuanError(status) } }); return;
       }
       if (body.stream) {
         response.writeHead(200, { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-store' });
-        await pipeChatAsMessages(upstream, response, body.model, controller.signal, 'OpenLux');
+        await pipeChatAsMessages(upstream, response, body.model, controller.signal, '词元API');
       } else {
         const value = await readProviderJson(upstream);
         if (!value || typeof value !== 'object' || !('choices' in value) || !Array.isArray(value.choices) || !value.choices.length) throw new Error();
@@ -187,7 +183,7 @@ export class OpenLuxService {
       }
     } catch {
       const error = { type: 'api_error', message: controller.signal.aborted
-        ? 'OpenLux 请求已取消或超时。' : 'OpenLux 请求或协议转换失败，请检查模型和网络后重试。' };
+        ? '词元API 请求已取消或超时。' : '词元API 请求或协议转换失败，请检查模型和网络后重试。' };
       if (!response.destroyed) {
         if (!response.headersSent) json(response, 502, { type: 'error', error });
         else response.end(formatSSEEvent('error', { type: 'error', error }));
@@ -207,7 +203,7 @@ export class OpenLuxService {
     signal?.addEventListener('abort', abort, { once: true });
     if (signal?.aborted) controller.abort();
     const timeout = setTimeout(abort, 60_000);
-    let lease: OpenLuxRuntimeLease | undefined;
+    let lease: CiyuanRuntimeLease | undefined;
     try {
       lease = await this.acquire(profile, controller.signal);
       const response = await this.request(`${lease.profile.baseUrl}/v1/messages`, {
@@ -216,11 +212,11 @@ export class OpenLuxService {
         body: JSON.stringify({ model: profile.defaultModel || profile.model, max_tokens: 1, messages: [{ role: 'user', content: 'Reply with OK.' }] }),
       });
       const value = await readProviderJson(response) as { type?: string; content?: unknown[] };
-      if (response.statusCode !== 200) throw new Error(openLuxError(response.statusCode ?? 502));
-      if (value.type !== 'message' || !Array.isArray(value.content) || !value.content.length) throw new Error('OpenLux 未返回有效消息。');
+      if (response.statusCode !== 200) throw new Error(ciyuanError(response.statusCode ?? 502));
+      if (value.type !== 'message' || !Array.isArray(value.content) || !value.content.length) throw new Error('词元API 未返回有效消息。');
     } catch (error) {
-      if (error instanceof Error && error.message.startsWith('OpenLux ')) throw error;
-      throw new Error(controller.signal.aborted ? 'OpenLux 连接测试超时。' : 'OpenLux 连接测试失败，请检查网络后重试。');
+      if (error instanceof Error && error.message.startsWith('词元API ')) throw error;
+      throw new Error(controller.signal.aborted ? '词元API 连接测试超时。' : '词元API 连接测试失败，请检查网络后重试。');
     } finally { clearTimeout(timeout); signal?.removeEventListener('abort', abort); lease?.release(); }
   }
 

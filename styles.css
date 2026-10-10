@@ -9761,13 +9761,13 @@ body.theme-dark .wesight-wechat-publish-button {
 .wesight-member-ai-card progress::-webkit-progress-value { background: var(--interactive-accent); border-radius: 3px; }
 .wesight-member-ai-card select { max-width: 100%; }
 
-/* OpenLux catalog and the Claude provider picker share the desktop grouping layout. */
+/* Ciyuan API catalog and the Claude provider picker share the desktop grouping layout. */
 .wesight-vendor-icon { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; flex: 0 0 20px; }
 .wesight-vendor-icon svg { width: 20px; height: 20px; }
-.wesight-openlux-settings .wesight-provider-help a { margin-right: 16px; }
-.wesight-openlux-settings .wesight-provider-title-wrap > .wesight-vendor-icon { color: #ea7900; }
-.wesight-openlux-settings input { width: 100%; }
-.wesight-openlux-settings [hidden] { display: none; }
+.wesight-ciyuan-settings .wesight-provider-help a { margin-right: 16px; }
+.wesight-ciyuan-settings .wesight-provider-title-wrap > .wesight-vendor-icon { color: #ea7900; }
+.wesight-ciyuan-settings input { width: 100%; }
+.wesight-ciyuan-settings [hidden] { display: none; }
 .wesight-model-catalog { display: flex; flex-direction: column; gap: 8px; min-width: 0; min-height: 0; }
 .wesight-catalog-search { display: flex; align-items: center; gap: 8px; border: 1px solid var(--background-modifier-border); border-radius: 8px; padding: 0 10px; flex-shrink: 0; }
 .wesight-catalog-search > span { display: flex; color: var(--text-muted); }

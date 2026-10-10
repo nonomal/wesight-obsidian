@@ -1,6 +1,6 @@
-import { OPEN_LUX } from '../openlux/constants';
-import { isOpenLuxProfile, type OpenLuxService } from '../openlux/service';
-import { renderOpenLuxSettings } from './openLuxSettings';
+import { CIYUAN_API } from '../ciyuan/constants';
+import { isCiyuanProfile, type CiyuanService } from '../ciyuan/service';
+import { renderCiyuanSettings } from './ciyuanSettings';
 import { renderModelIcon } from './modelIcons';
 import { App, Notice, Plugin, PluginSettingTab, Setting, setIcon } from 'obsidian';
 
@@ -42,7 +42,7 @@ interface SettingsTabDeps {
   memberAi: MemberAiService;
   claudeInstaller: ClaudeInstaller;
   tokenDance: TokenDanceService;
-  openLux: OpenLuxService;
+  ciyuan: CiyuanService;
   getSettings: () => WeSightObsidianSettings;
   saveSettings: () => Promise<void>;
   providerStore: ProviderStore;
@@ -98,14 +98,14 @@ const PROVIDER_PRESETS: ProviderPreset[] = [
     anthropicAuthMode: 'authToken',
   },
   {
-    key: OPEN_LUX.key,
-    label: OPEN_LUX.name,
-    iconText: 'L',
+    key: CIYUAN_API.key,
+    label: CIYUAN_API.name,
+    iconText: '词',
     accent: '#ea7900',
     defaultApiFormat: 'openai',
-    baseUrls: { anthropic: '', openai: OPEN_LUX.baseUrl },
+    baseUrls: { anthropic: '', openai: CIYUAN_API.baseUrl },
     models: [],
-    apiKeyUrl: OPEN_LUX.website,
+    apiKeyUrl: CIYUAN_API.website,
     agentIds: ['claude'],
   },
   {
@@ -257,7 +257,7 @@ export class WeSightSettingTab extends PluginSettingTab {
   private activeTab: SettingsTabId = 'general';
   private selectedProviderKey = 'tokendance';
   private disposeMemberCard?: () => void;
-  private disposeOpenLux?: () => void;
+  private disposeCiyuan?: () => void;
   private readonly publishingSettings: WeChatPublishingSettings;
   private knowledgeStatusListener: ((event: { message?: string }) => void) | null = null;
 
@@ -289,7 +289,7 @@ export class WeSightSettingTab extends PluginSettingTab {
 
   override display(): void {
     this.disposeMemberCard?.();this.disposeMemberCard=undefined;
-    this.disposeOpenLux?.(); this.disposeOpenLux = undefined;
+    this.disposeCiyuan?.(); this.disposeCiyuan = undefined;
     if (this.knowledgeStatusListener) {
       this.deps.knowledgeBrain.off('status', this.knowledgeStatusListener);
       this.knowledgeStatusListener = null;
@@ -313,7 +313,7 @@ export class WeSightSettingTab extends PluginSettingTab {
 
   override hide(): void {
     this.disposeMemberCard?.();this.disposeMemberCard=undefined;
-    this.disposeOpenLux?.(); this.disposeOpenLux = undefined;
+    this.disposeCiyuan?.(); this.disposeCiyuan = undefined;
     if (this.knowledgeStatusListener) {
       this.deps.knowledgeBrain.off('status', this.knowledgeStatusListener);
       this.knowledgeStatusListener = null;
@@ -698,20 +698,20 @@ export class WeSightSettingTab extends PluginSettingTab {
       };
       const icon = row.createSpan({ cls: 'wesight-provider-icon', text: item.iconText });
       icon.style.setProperty('--provider-accent', item.accent);
-      if (item.key === OPEN_LUX.key) { icon.empty(); renderModelIcon(icon, OPEN_LUX.key); }
+      if (item.key === CIYUAN_API.key) { icon.empty(); renderModelIcon(icon, CIYUAN_API.key); }
       row.createSpan({ cls: 'wesight-provider-name', text: item.label });
       const toggle = row.createSpan({ cls: 'wesight-provider-toggle' });
       toggle.createSpan();
     }
 
     const detail = consoleEl.createDiv({ cls: 'wesight-provider-detail' });
-    if (preset.key === OPEN_LUX.key) {
-      const existing = this.deps.providerStore.list('claude').find(isOpenLuxProfile) ?? null;
-      this.disposeOpenLux = renderOpenLuxSettings(detail, {
-        service: this.deps.openLux, profile: existing, onCancel: () => this.display(),
+    if (preset.key === CIYUAN_API.key) {
+      const existing = this.deps.providerStore.list('claude').find(isCiyuanProfile) ?? null;
+      this.disposeCiyuan = renderCiyuanSettings(detail, {
+        service: this.deps.ciyuan, profile: existing, onCancel: () => this.display(),
         onSave: async config => {
           const profile = this.deps.providerStore.save({
-            id: existing?.id, agentId: 'claude', providerKey: OPEN_LUX.key, name: OPEN_LUX.name,
+            id: existing?.id, agentId: 'claude', providerKey: CIYUAN_API.key, name: CIYUAN_API.name,
             apiKey: config.apiKey, baseUrl: config.baseUrl, defaultModel: config.defaultModel,
             models: config.models.map(model => model.id), modelCatalog: config.models,
             wireApi: 'chat', anthropicAuthMode: 'authToken', isDefault: true,
@@ -721,7 +721,7 @@ export class WeSightSettingTab extends PluginSettingTab {
           settings.configSources.claude = 'providerProfile';
           await this.deps.saveSettings();
           this.deps.refreshViews();
-          new Notice('OpenLux 已保存为 Claude Code 默认供应商。');
+          new Notice('词元API 已保存为 Claude Code 默认供应商。');
           this.display();
         },
       });

@@ -1,5 +1,5 @@
-import { isOpenLuxProfile } from '../openlux/service';
-import { getModelVendor, profileCatalog } from '../openlux/catalog';
+import { isCiyuanProfile } from '../ciyuan/service';
+import { getModelVendor, profileCatalog } from '../ciyuan/catalog';
 import { MODEL_VENDOR_LABELS } from '../providers/modelVendors';
 import { showProviderModelPicker } from './providerModelPicker';
 import { Editor, ItemView, MarkdownRenderer, MarkdownView, Menu, Notice, setIcon, TFile, WorkspaceLeaf } from 'obsidian';
@@ -1505,9 +1505,9 @@ export class WeSightChatView extends ItemView {
     if (this.agentId === 'claude' && currentSettings.configSources.claude === 'providerProfile') {
       const profiles = this.deps.providerStore.list('claude');
       const selectedProfile = profiles.find(profile => profile.id === currentSettings.providerProfileByAgent.claude);
-      if (selectedProfile && isOpenLuxProfile(selectedProfile)) {
+      if (selectedProfile && isCiyuanProfile(selectedProfile)) {
         const model = profileCatalog(selectedProfile).find(model => model.id === (selectedProfile.defaultModel || selectedProfile.model));
-        button.createSpan({ cls: 'wesight-selected-model-source', text: `OpenLux · ${MODEL_VENDOR_LABELS[getModelVendor(model ?? { id: selectedProfile.defaultModel })]}` });
+        button.createSpan({ cls: 'wesight-selected-model-source', text: `词元API · ${MODEL_VENDOR_LABELS[getModelVendor(model ?? { id: selectedProfile.defaultModel })]}` });
       }
       button.tabIndex = 0;
       button.setAttr('role', 'button');
@@ -2605,7 +2605,7 @@ export class WeSightChatView extends ItemView {
     }
     if (!selectedProfile) return 'Configure model';
     const model = selectedProfile.defaultModel || selectedProfile.model || '未设置模型';
-    return isOpenLuxProfile(selectedProfile) ? profileCatalog(selectedProfile).find(item => item.id === model)?.name || model : model;
+    return isCiyuanProfile(selectedProfile) ? profileCatalog(selectedProfile).find(item => item.id === model)?.name || model : model;
   }
 
   private async updateSuggestions(): Promise<void> {

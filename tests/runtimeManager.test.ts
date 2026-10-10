@@ -5,7 +5,7 @@ import { setTimeout as delay } from 'timers/promises';
 
 import { invalidateRuntimeDiscoveryCache } from '../src/runtime/discovery';
 import { RuntimeManager } from '../src/runtime/runtimeManager';
-import { OpenLuxService } from '../src/openlux/service';
+import { CiyuanService } from '../src/ciyuan/service';
 import type { ProviderStore } from '../src/storage/providerStore';
 import {
   DEFAULT_SETTINGS,
@@ -75,7 +75,7 @@ describe('RuntimeManager provider safeguards', () => {
     fs.rmSync(tempDir, { recursive: true, force: true });
   });
 
-  test.each([0, 1])('OpenLux runtime uses local credentials and releases them after CLI exit %s', async exitCode => {
+  test.each([0, 1])('词元API runtime uses local credentials and releases them after CLI exit %s', async exitCode => {
     const binaryPath = path.join(tempDir, 'fake-claude');
     fs.writeFileSync(binaryPath, [
       '#!/usr/bin/env node',
@@ -84,16 +84,16 @@ describe('RuntimeManager provider safeguards', () => {
       `process.exitCode=${exitCode}; });`,
     ].join('\n'));
     fs.chmodSync(binaryPath, 0o755);
-    const profile = { ...makeProfile('real-upstream-key'), name: 'OpenLux', providerKey: 'openlux', baseUrl: 'https://api.openlux.ai/v1' };
+    const profile = { ...makeProfile('real-upstream-key'), name: '词元API', providerKey: 'ciyuan', baseUrl: 'https://ciyuan.today/v1' };
     const providerStore = { find: () => profile } as unknown as ProviderStore;
-    const service = new OpenLuxService();
+    const service = new CiyuanService();
     const acquire = vi.spyOn(service, 'acquire');
     const manager = new RuntimeManager(providerStore, () => makeSettings(binaryPath), undefined, undefined, service);
     const events: RuntimeTurnEvent[] = [];
     try {
       await manager.runTurn(request, event => events.push(event));
       expect(acquire).toHaveBeenCalledOnce();
-      const lease = await acquire.mock.results[0].value as Awaited<ReturnType<OpenLuxService['acquire']>>;
+      const lease = await acquire.mock.results[0].value as Awaited<ReturnType<CiyuanService['acquire']>>;
       const text = events.filter(event => event.type === 'text').map(event => event.type === 'text' ? event.content : '').join('');
       expect(text).toContain(lease.profile.apiKey);
       expect(text).not.toContain('real-upstream-key');

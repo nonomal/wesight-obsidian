@@ -1,8 +1,8 @@
 import { setIcon } from 'obsidian';
 import type { ProviderProfile } from '../types';
 import { isTokenDanceProfile } from '../tokendance/service';
-import { isOpenLuxProfile } from '../openlux/service';
-import { profileCatalog } from '../openlux/catalog';
+import { isCiyuanProfile } from '../ciyuan/service';
+import { profileCatalog } from '../ciyuan/catalog';
 import { renderModelCatalog } from './modelCatalog';
 import { renderModelIcon } from './modelIcons';
 
@@ -13,7 +13,7 @@ export function showProviderModelPicker(trigger: HTMLElement, options: {
   onManage: () => void;
   onClose: () => void;
 }): () => void {
-  const rank = (profile: ProviderProfile): number => isTokenDanceProfile(profile) ? 0 : isOpenLuxProfile(profile) ? 1 : 2;
+  const rank = (profile: ProviderProfile): number => isTokenDanceProfile(profile) ? 0 : isCiyuanProfile(profile) ? 1 : 2;
   const profiles = [...options.profiles].sort((a, b) => rank(a) - rank(b));
   let active = profiles.find(profile => profile.id === options.selectedProfileId) ?? profiles[0];
   const popup = createDiv();
@@ -34,7 +34,7 @@ export function showProviderModelPicker(trigger: HTMLElement, options: {
       const selected = profile.id === active?.id;
       const row = suppliers.createEl('button', { cls: 'wesight-picker-supplier', attr: { type: 'button', 'aria-pressed': String(selected) } });
       row.toggleClass('is-selected', selected);
-      renderModelIcon(row.createSpan(), isOpenLuxProfile(profile) ? 'openlux' : isTokenDanceProfile(profile) ? 'tokendance' : profile.providerKey || profile.name.toLowerCase());
+      renderModelIcon(row.createSpan(), isCiyuanProfile(profile) ? 'ciyuan' : isTokenDanceProfile(profile) ? 'tokendance' : profile.providerKey || profile.name.toLowerCase());
       row.createSpan({ cls: 'wesight-picker-supplier-name', text: profile.name });
       if (profile.id === options.selectedProfileId) setIcon(row.createSpan({ cls: 'wesight-catalog-check' }), 'check');
       row.onclick = () => {
@@ -55,7 +55,7 @@ export function showProviderModelPicker(trigger: HTMLElement, options: {
     catalog = renderModelCatalog(detail, {
       getModels: () => models,
       getSelected: () => profile.id === options.selectedProfileId ? profile.defaultModel || profile.model : '',
-      groupByVendor: isOpenLuxProfile(profile),
+      groupByVendor: isCiyuanProfile(profile),
       onSelect: id => { options.onSelect(profile.id, id); dispose(); },
     });
   };

@@ -1,45 +1,45 @@
 import { Notice, setIcon } from 'obsidian';
 import type { ProviderProfile } from '../types';
-import { mergeCatalogModels, profileCatalog, type CatalogModel } from '../openlux/catalog';
-import { OPEN_LUX } from '../openlux/constants';
-import type { OpenLuxService } from '../openlux/service';
+import { mergeCatalogModels, profileCatalog, type CatalogModel } from '../ciyuan/catalog';
+import { CIYUAN_API } from '../ciyuan/constants';
+import type { CiyuanService } from '../ciyuan/service';
 import { initializeStoredSecretInput, resolveSecretInput } from './secretInput';
 import { renderModelCatalog } from './modelCatalog';
 import { renderModelIcon } from './modelIcons';
 
-export function renderOpenLuxSettings(parent: HTMLElement, options: {
-  service: OpenLuxService;
+export function renderCiyuanSettings(parent: HTMLElement, options: {
+  service: CiyuanService;
   profile: ProviderProfile | null;
   onSave: (config: { apiKey: string; baseUrl: string; models: CatalogModel[]; defaultModel: string }) => Promise<void>;
   onCancel: () => void;
 }): () => void {
   const controller = new AbortController();
-  parent.addClass('wesight-openlux-settings');
+  parent.addClass('wesight-ciyuan-settings');
   let models = options.profile ? profileCatalog(options.profile) : [];
   let selected = options.profile?.defaultModel || options.profile?.model || '';
   let busy = false;
   let editing: string | undefined;
   const head = parent.createDiv({ cls: 'wesight-provider-detail-head' });
   const title = head.createDiv({ cls: 'wesight-provider-title-wrap' });
-  renderModelIcon(title.createSpan(), OPEN_LUX.key);
-  title.createEl('h3', { text: 'OpenLux 提供商设置' });
+  renderModelIcon(title.createSpan(), CIYUAN_API.key);
+  title.createEl('h3', { text: '词元API 提供商设置' });
   head.createSpan({ cls: `wesight-provider-status ${options.profile?.apiKey ? 'is-enabled' : ''}`, text: options.profile?.apiKey ? '已配置' : '未配置' });
   const links = parent.createDiv({ cls: 'wesight-provider-help' });
-  for (const [text, href] of [['获取 API key ↗', OPEN_LUX.website], ['接入文档 ↗', OPEN_LUX.docsUrl]]) {
+  for (const [text, href] of [['获取 API key ↗', CIYUAN_API.website], ['接入文档 ↗', CIYUAN_API.docsUrl]]) {
     links.createEl('a', { text, href, attr: { target: '_blank', rel: 'noopener noreferrer' } });
   }
   const keyField = parent.createDiv({ cls: 'wesight-provider-field' });
   const keyLabel = keyField.createEl('label', { text: 'API key' });
   const secret = keyLabel.createDiv({ cls: 'wesight-provider-secret' });
-  const key = secret.createEl('input', { attr: { type: 'password', placeholder: '输入 OpenLux API key', 'aria-label': 'OpenLux API key' } });
+  const key = secret.createEl('input', { attr: { type: 'password', placeholder: '输入词元API 的 API key', 'aria-label': '词元API 的 API key' } });
   initializeStoredSecretInput(key, Boolean(options.profile?.apiKey));
   const showKey = secret.createEl('button', { cls: 'wesight-provider-icon-btn', attr: { type: 'button', 'aria-label': '显示或隐藏 API key' } });
   setIcon(showKey, 'eye');
   showKey.onclick = () => { key.type = key.type === 'password' ? 'text' : 'password'; };
   const baseField = parent.createDiv({ cls: 'wesight-provider-field' });
   const baseLabel = baseField.createEl('label', { text: 'API base URL' });
-  const base = baseLabel.createEl('input', { attr: { type: 'text', 'aria-label': 'OpenLux API base URL' } });
-  base.value = options.profile?.baseUrl || OPEN_LUX.baseUrl;
+  const base = baseLabel.createEl('input', { attr: { type: 'text', 'aria-label': '词元API 请求地址' } });
+  base.value = options.profile?.baseUrl || CIYUAN_API.baseUrl;
   parent.createDiv({ cls: 'wesight-provider-help', text: 'OpenAI 兼容 · Claude Code 可选择多家厂商的对话模型。' });
   const status = parent.createDiv({ cls: 'wesight-provider-help', attr: { role: 'status', 'aria-live': 'polite' } });
   const actions = parent.createDiv({ cls: 'wesight-provider-test-row' });
@@ -47,7 +47,7 @@ export function renderOpenLuxSettings(parent: HTMLElement, options: {
   const defaultField = parent.createDiv({ cls: 'wesight-provider-field' });
   defaultField.createDiv({ cls: 'wesight-provider-field-head', text: '默认模型' });
   const defaultWrap = defaultField.createDiv({ cls: 'wesight-catalog-default' });
-  const defaultButton = defaultWrap.createEl('button', { cls: 'wesight-catalog-default-button', attr: { type: 'button', 'aria-label': 'OpenLux 默认模型', 'aria-expanded': 'false' } });
+  const defaultButton = defaultWrap.createEl('button', { cls: 'wesight-catalog-default-button', attr: { type: 'button', 'aria-label': '词元API 默认模型', 'aria-expanded': 'false' } });
   const defaultText = defaultButton.createSpan();
   setIcon(defaultButton.createSpan({ cls: 'wesight-catalog-chevron' }), 'chevron-down');
   const defaultMenu = defaultWrap.createDiv({ cls: 'wesight-catalog-default-menu' });
@@ -136,29 +136,29 @@ export function renderOpenLuxSettings(parent: HTMLElement, options: {
       await work();
       if (!controller.signal.aborted) { status.setText(success); new Notice(success); }
     } catch (error) {
-      if (!controller.signal.aborted) { const message = error instanceof Error ? error.message : 'OpenLux 操作失败。'; status.setText(message); new Notice(message); }
+      if (!controller.signal.aborted) { const message = error instanceof Error ? error.message : '词元API 操作失败。'; status.setText(message); new Notice(message); }
     } finally { busy = false; if (!controller.signal.aborted) refresh(); }
   }
-  const config = (): { apiKey: string; baseUrl: string } => ({ apiKey: resolveSecretInput(key.value, options.profile?.apiKey ?? '').trim(), baseUrl: base.value.trim() || OPEN_LUX.baseUrl });
+  const config = (): { apiKey: string; baseUrl: string } => ({ apiKey: resolveSecretInput(key.value, options.profile?.apiKey ?? '').trim(), baseUrl: base.value.trim() || CIYUAN_API.baseUrl });
   fetchModels.onclick = () => void run(async () => {
     const fetched = await options.service.fetchCatalog(config(), controller.signal);
     if (controller.signal.aborted) return;
     models = mergeCatalogModels(fetched, models);
     if (!models.some(model => model.id === selected)) selected = models[0]?.id ?? '';
-  }, '已更新 OpenLux 模型列表，请选择默认模型并保存。');
+  }, '已更新词元API 模型列表，请选择默认模型并保存。');
   test.onclick = () => void run(async () => {
-    await options.service.test({ ...options.profile, ...config(), providerKey: OPEN_LUX.key, agentId: 'claude', name: OPEN_LUX.name,
-      id: options.profile?.id ?? 'openlux-test', model: selected, defaultModel: selected, models: models.map(model => model.id),
+    await options.service.test({ ...options.profile, ...config(), providerKey: CIYUAN_API.key, agentId: 'claude', name: CIYUAN_API.name,
+      id: options.profile?.id ?? 'ciyuan-test', model: selected, defaultModel: selected, models: models.map(model => model.id),
       wireApi: 'chat', isDefault: true, createdAt: 0, updatedAt: 0 }, controller.signal);
-  }, 'OpenLux 连接成功。');
+  }, '词元API 连接成功。');
   save.onclick = () => void run(async () => {
-    if (!config().apiKey) throw new Error('请先输入 OpenLux API key。');
-    if (!selected || !models.some(model => model.id === selected)) throw new Error('请先选择 OpenLux 默认模型。');
+    if (!config().apiKey) throw new Error('请先输入词元API 的 API Key。');
+    if (!selected || !models.some(model => model.id === selected)) throw new Error('请先选择词元API 默认模型。');
     let url: URL;
-    try { url = new URL(config().baseUrl); } catch { throw new Error('OpenLux API base URL 无效。'); }
-    if (!['https:', 'http:'].includes(url.protocol) || url.username || url.password || url.search || url.hash) throw new Error('OpenLux API base URL 无效。');
+    try { url = new URL(config().baseUrl); } catch { throw new Error('词元API 请求地址无效。'); }
+    if (!['https:', 'http:'].includes(url.protocol) || url.username || url.password || url.search || url.hash) throw new Error('词元API 请求地址无效。');
     await options.onSave({ ...config(), models, defaultModel: selected });
-  }, 'OpenLux 已保存为 Claude Code 默认供应商。');
+  }, '词元API 已保存为 Claude Code 默认供应商。');
   refresh();
   return () => { controller.abort(); document.removeEventListener('mousedown', outside); };
 }

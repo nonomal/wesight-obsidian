@@ -29,11 +29,11 @@ Install [WeSight Publish Assistant 1.0.0 or later](https://github.com/freestylef
 
 The task panel supports status, editor links, login recovery, and retries. All workflows stop at an editable draft: **you perform the final Publish action**. The existing WeChat draft service continues separately.
 
-### OpenLux and grouped model selection (1.2.0)
+### 词元API and grouped model selection
 
-Claude Code also supports [OpenLux](docs/openlux.md), listed immediately after TokenDance. Enter an API key, fetch your account’s chat models, and choose a default. OpenLux models are grouped by manufacturer in settings and the two-column chat picker, with search and collapsible groups.
+Claude Code also supports [词元API](docs/ciyuan.md), listed immediately after TokenDance. Enter an API key, fetch your account’s chat models, and choose a default. 词元API models are grouped by manufacturer in settings and the two-column chat picker, with search and collapsible groups.
 
-See the [1.2.0 release notes](docs/releases/1.2.0.md) for setup, compatibility, and validation details.
+The [1.2.2 update](docs/releases/1.2.2.md) renames OpenLux to 词元API and uses `https://ciyuan.today/v1`. Existing API keys and model selections carry over automatically. See the release notes for upgrade and validation details.
 
 ### Member models and usage (1.1.0)
 

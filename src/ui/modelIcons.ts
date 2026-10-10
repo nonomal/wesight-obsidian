@@ -3,27 +3,6 @@ import { setIcon } from 'obsidian';
 interface IconNode { tag: string; attrs: Record<string, string>; children?: IconNode[] }
 // Static SVG geometry adapted from the WeSight desktop provider icons.
 const icons: Record<string, { viewBox: string; fill: string; nodes: IconNode[] }> = {
-  "openlux": {
-    "viewBox": "0 0 24 24",
-    "fill": "none",
-    "nodes": [
-      {
-        "tag": "path",
-        "attrs": {
-          "d": "M5 3h5v10a3 3 0 0 0 3 3h6v5H8a3 3 0 0 1-3-3V3Z",
-          "fill": "currentColor"
-        }
-      },
-      {
-        "tag": "path",
-        "attrs": {
-          "d": "m18 3 1 3 3 1-3 1-1 3-1-3-3-1 3-1 1-3Z",
-          "fill": "currentColor",
-          "opacity": ".65"
-        }
-      }
-    ]
-  },
   "openai": {
     "viewBox": "0 0 24 24",
     "fill": "currentColor",
@@ -397,6 +376,7 @@ const icons: Record<string, { viewBox: string; fill: string; nodes: IconNode[] }
 let iconSequence = 0;
 export function renderModelIcon(parent: HTMLElement, vendor: string): void {
   parent.addClass('wesight-vendor-icon');
+  if (vendor === 'ciyuan') { setIcon(parent, 'binary'); return; }
   const icon = icons[vendor];
   if (!icon) { if (vendor === 'tokendance') parent.setText('T'); else setIcon(parent, 'box'); return; }
   const namespace = 'http://www.w3.org/2000/svg';

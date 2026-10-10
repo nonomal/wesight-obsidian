@@ -1,4 +1,5 @@
-import type { CatalogModel } from '../openlux/catalog';
+import type { CatalogModel } from '../ciyuan/catalog';
+import { isCiyuanProfile, normalizeCiyuanProfile } from '../ciyuan/profile';
 import fs from 'fs';
 import type { SecretStorage } from 'obsidian';
 
@@ -80,6 +81,7 @@ function inferWireApi(baseUrl: string, explicit?: unknown): ProviderWireApi {
 }
 
 function normalizeProfile(profile: ProviderProfile): ProviderProfile {
+  profile = normalizeCiyuanProfile(profile);
   const defaultModel = (profile.defaultModel ?? profile.model ?? '').trim();
   return {
     providerKey: typeof profile.providerKey === 'string' ? profile.providerKey : undefined,
@@ -138,7 +140,9 @@ export class ProviderStore {
     const profiles = this.list(agentId);
     if (idOrName?.trim()) {
       const needle = idOrName.trim();
-      return profiles.find(profile => profile.id === needle || profile.name === needle) ?? null;
+      return profiles.find(profile => profile.id === needle || profile.name === needle)
+        ?? (isCiyuanProfile({ name: needle }) ? profiles.find(isCiyuanProfile) : undefined)
+        ?? null;
     }
     return profiles.find(profile => profile.isDefault) ?? profiles[0] ?? null;
   }
@@ -148,14 +152,14 @@ export class ProviderStore {
     const previous = store.profiles.find(profile => profile.id === input.id);
     const now = Date.now();
     const defaultModel = (input.defaultModel ?? input.model ?? '').trim();
-    const profile: ProviderProfile = {
+    const profile: ProviderProfile = normalizeProfile({
       providerKey: input.providerKey ?? previous?.providerKey,
       modelCatalog: normalizeCatalog(input.modelCatalog ?? previous?.modelCatalog),
       id: input.id?.trim() || createId('profile'),
       agentId: input.agentId,
       name: input.name.trim(),
       apiKey: input.apiKey ?? (input.id ? this.readApiKey(input.id) : ''),
-      baseUrl: input.baseUrl ?? '',
+      baseUrl: input.baseUrl ?? previous?.baseUrl ?? '',
       model: defaultModel,
       defaultModel,
       models: normalizeModels(input.models, defaultModel),
@@ -169,7 +173,7 @@ export class ProviderStore {
       isDefault: Boolean(input.isDefault),
       createdAt: now,
       updatedAt: now,
-    };
+    });
 
     if (!profile.name) {
       throw new Error('Provider profile name is required.');
@@ -328,9 +332,13 @@ export class ProviderStore {
     }
     const store = readJsonFile<ProviderStoreFile>(this.path, EMPTY_STORE);
     let containsLegacySecrets = false;
+    let containsLegacyProviderIdentity = false;
     const profiles = Array.isArray(store.profiles)
       ? store.profiles.map((stored) => {
         const profile = normalizeProfile(stored);
+        if (isCiyuanProfile(stored) && (profile.providerKey !== stored.providerKey || profile.name !== stored.name || profile.baseUrl !== stored.baseUrl)) {
+          containsLegacyProviderIdentity = true;
+        }
         const existingSecret = this.readApiKey(profile.id);
         if (profile.apiKey) {
           containsLegacySecrets = true;
@@ -344,7 +352,7 @@ export class ProviderStore {
         };
       })
       : [];
-    if (containsLegacySecrets) {
+    if (containsLegacySecrets || containsLegacyProviderIdentity) {
       this.write({ version: 1, profiles });
       return { version: 1, profiles: profiles.map(cloneProfile) };
     }
